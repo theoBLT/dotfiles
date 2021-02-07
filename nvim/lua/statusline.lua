@@ -185,6 +185,14 @@ local function addPart(section, entry)
   table.insert(section, entry)
 end
 
+local function lspStatus()
+  if #vim.lsp.buf_get_clients() > 0 then
+    return require('lsp-status').status()
+  else
+    return ''
+  end
+end
+
 -- local function getShortGitBranch()
 --   local branch = vcs.get_git_branch()
 --   local parts = branch:split("/")
@@ -290,11 +298,19 @@ addPart(gls.left, {
 
 -- Right Section
 
+-- addPart(gls.right, {
+--   CocStatus = {
+--     provider = get_diagnostic_info,
+--     highlight = {colors.green, colors.background},
+--     icon = '  🗱'
+--   }
+-- })
+
 addPart(gls.right, {
-  CocStatus = {
-    provider = get_diagnostic_info,
-    highlight = {colors.green, colors.background},
-    icon = '  🗱'
+  LspStatus = {
+    provider = lspStatus,
+    highlight = {colors.offsetGray, colors.background},
+    icon = '  🗱',
   }
 })
 
