@@ -4,6 +4,7 @@ local gl = require('galaxyline')
 local fileinfo = require('galaxyline.provider_fileinfo')
 local vcs = require('galaxyline.provider_vcs')
 local gls = gl.section
+local lsp_status = require('lsp-status')
 
 local function file_readonly()
   if vim.bo.filetype == 'help' then return '' end
@@ -187,7 +188,7 @@ end
 
 local function lspStatus()
   if #vim.lsp.buf_get_clients() > 0 then
-    return require('lsp-status').status()
+    return lsp_status.status()
   else
     return ''
   end
@@ -306,11 +307,22 @@ addPart(gls.left, {
 --   }
 -- })
 
+-- LSP status
+lsp_status.config({
+  status_symbol = '',
+  indicator_errors = '',
+  indicator_warnings = '',
+  indicator_info = '',
+  indicator_hint = 'כֿ',
+  indicator_ok = '✔️',
+  spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' },
+})
+
 addPart(gls.right, {
   LspStatus = {
     provider = lspStatus,
     highlight = {colors.offsetGray, colors.background},
-    icon = '  🗱',
+    icon = ' ',
   }
 })
 
@@ -378,7 +390,6 @@ addPart(gls.right, {
     highlight = {colors.red,colors.background},
   }
 })
-
 
 -- Short Left Section
 
