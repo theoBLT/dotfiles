@@ -2,6 +2,70 @@ local lspconfig = require('lspconfig')
 local configs = require('lspconfig/configs')
 local util = require('lspconfig/util')
 local lsp_status = require('lsp-status')
+local compe = require('compe')
+local snippets_nvim = require('snippets')
+
+-- Capabilities
+local capabilities = lsp_status.capabilities
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Completion
+compe.setup({
+  enabled = true,
+  autocomplete = true,
+  documentation = true,
+  min_length = 1,
+  source = {
+    path = true,
+    buffer = true,
+    calc = false,
+    vsnip = false,
+    nvim_lsp = true,
+    nvim_lua = true,
+    spell = true,
+    tags = true,
+    snippets_nvim = true,
+    treesitter = true,
+  },
+})
+
+do
+  local t = function(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+  end
+
+  -- Use (s-)tab to:
+  --- move to prev/next item in completion menuone
+  --- jump to prev/next snippet's placeholder
+  _G.tab_complete = function()
+    -- local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
+
+    if vim.fn.pumvisible() == 1 then
+      return t "<C-n>"
+    -- elseif snippetNvim or snippets_nvim.has_active_snippet() then
+      -- return "<cmd>lua snippets_nvim.expand_or_advance(1)<CR>"
+    -- elseif vim.fn.call("vsnip#available", {1}) == 1 then
+    --   return t "<Plug>(vsnip-expand-or-jump)"
+    else
+      return t "<Tab>"
+    end
+  end
+
+  _G.s_tab_complete = function()
+    if vim.fn.pumvisible() == 1 then
+      return t "<C-p>"
+    -- elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
+    --   return t "<Plug>(vsnip-jump-prev)"
+    else
+      return t "<S-Tab>"
+    end
+  end
+end
+
+vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 
 -- set logs, read with
 -- :lua vim.cmd('e'..vim.lsp.get_log_path())
@@ -9,7 +73,6 @@ vim.lsp.set_log_level("debug")
 
 -- Setup LSP statusline
 lsp_status.register_progress()
-
 
 -- Shared on_attach + capabilities
 --
@@ -19,8 +82,6 @@ local on_attach = function(client, bufnr)
   lsp_status.on_attach(client, bufnr)
 end
 
-local capabilities = lsp_status.capabilities
-
 lspconfig.util.default_config = vim.tbl_extend(
   "force",
   lspconfig.util.default_config,
@@ -29,6 +90,11 @@ lspconfig.util.default_config = vim.tbl_extend(
     on_attach = on_attach,
   }
 )
+
+-- Flow
+lspconfig.flow.setup({
+  cmd = { 'node_modules/.bin/flow', 'lsp' },
+})
 
 -- Lua
 local sumneko_cmd
