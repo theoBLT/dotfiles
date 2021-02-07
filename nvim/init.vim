@@ -218,6 +218,7 @@ Plug 'neovim/nvim-lspconfig'     " out of the box LSP configs for common langs
 Plug 'glepnir/lspsaga.nvim'      " code action plugin
 Plug 'nvim-lua/lsp-status.nvim'  " provides statusline information for LSP
 Plug 'hrsh7th/nvim-compe'        " completion engine
+Plug 'onsails/lspkind-nvim'      " add vscode-style icons to completion menu
 
 " Ruby
 Plug 'keith/rspec.vim'                    " better RSpec syntax highlighting
@@ -436,6 +437,7 @@ vnoremap <leader>g :GBrowse!<CR>
 " ==================== LSP ======================
 
 set completeopt=menu,menuone,noselect
+
 call luaeval('require("lspservers")')
 
 nnoremap <silent> gh :Lspsaga lsp_finder<CR>

@@ -4,12 +4,15 @@ local util = require('lspconfig/util')
 local lsp_status = require('lsp-status')
 local compe = require('compe')
 local snippets_nvim = require('snippets')
+local lspkind = require('lspkind')
 
 -- Capabilities
 local capabilities = lsp_status.capabilities
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Completion
+lspkind.init() -- setup icons
+
 compe.setup({
   enabled = true,
   autocomplete = true,
