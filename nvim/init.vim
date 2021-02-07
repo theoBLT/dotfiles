@@ -230,6 +230,8 @@ Plug 'ecomba/vim-ruby-refactoring'        " extract vars, methods, etc
 
 " Snippets
 Plug 'norcalli/snippets.nvim'
+Plug 'SirVer/UltiSnips'
+Plug 'honza/vim-snippets'
 
 " Syntax checking
 Plug 'w0rp/ale'
@@ -514,7 +516,9 @@ call luaeval('require("statusline")')
 
 " ================== snippets ==================
 
-inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+" inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+
+let g:UltiSnipsExpandTrigger = "<nop>"
 call luaeval('require("custom_snippets")')
 
 " ================= Stripe ======================

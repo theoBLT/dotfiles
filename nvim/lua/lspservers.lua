@@ -8,7 +8,8 @@ local lspkind = require('lspkind')
 
 -- Capabilities
 local capabilities = lsp_status.capabilities
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Completion
 lspkind.init() -- setup icons
@@ -29,6 +30,7 @@ compe.setup({
     tags = true,
     snippets_nvim = true,
     treesitter = true,
+    ultisnips = true,
   },
 })
 
@@ -37,18 +39,26 @@ do
     return vim.api.nvim_replace_termcodes(str, true, true, true)
   end
 
+  local isAutocompleteSelected = function()
+    local result = vim.fn.complete_info({'selected'})
+    print("Result: " .. vim.inspect(result))
+    return result['selected'] >= 0
+  end
+
+  _G.expand_ultisnip_or_compe_confirm = function()
+    return vim.fn['compe#confirm']("\n")
+  end
+
   -- Use (s-)tab to:
   --- move to prev/next item in completion menuone
   --- jump to prev/next snippet's placeholder
   _G.tab_complete = function()
-    -- local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
+    local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
 
     if vim.fn.pumvisible() == 1 then
       return t "<C-n>"
-    -- elseif snippetNvim or snippets_nvim.has_active_snippet() then
-      -- return "<cmd>lua snippets_nvim.expand_or_advance(1)<CR>"
-    -- elseif vim.fn.call("vsnip#available", {1}) == 1 then
-    --   return t "<Plug>(vsnip-expand-or-jump)"
+    elseif snippetNvim or snippets_nvim.has_active_snippet() then
+      return "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
     else
       return t "<Tab>"
     end
@@ -63,8 +73,28 @@ do
       return t "<S-Tab>"
     end
   end
+
+  _G.enter_with_snippets = function()
+    local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
+    local autocompleteOpen = vim.fn.pumvisible() == 1
+    local autocompleteSelected = isAutocompleteSelected()
+
+    if snippetNvim and not autocompleteSelected then
+      if autocompleteOpen then
+        vim.fn['compe#close']('<C-e>')
+      end
+
+      return t "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
+    else
+      -- return [[ <C-R>=compe#confirm('<CR>')<CR> ]]
+      -- return t "<cmd>lua return expand_ultisnip_or_compe_confirm()<CR>"
+      -- return "<C-R>=(g:UltiSnips_Expandable() > 0 ? '' : compe#confirm('<CR>')fdsa)<CR>"
+      return vim.fn['compe#confirm']("\n")
+    end
+  end
 end
 
+vim.api.nvim_set_keymap("i", "<CR>", "v:lua.enter_with_snippets()", {expr = true, silent = true, noremap = true})
 vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
