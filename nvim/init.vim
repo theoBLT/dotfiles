@@ -221,6 +221,9 @@ Plug 'nvim-lua/lsp-status.nvim'  " provides statusline information for LSP
 Plug 'hrsh7th/nvim-compe'        " completion engine
 Plug 'onsails/lspkind-nvim'      " add vscode-style icons to completion menu
 
+" Markdown
+Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}  " markdown preview with :Glow
+
 " Ruby
 Plug 'keith/rspec.vim'                    " better RSpec syntax highlighting
 Plug 'jgdavey/vim-blockle'                " toggle block styles with ,b
