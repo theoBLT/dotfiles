@@ -193,6 +193,7 @@ call plug#begin('~/.local/nvim/plugins')
 " Core
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'Konfekt/vim-alias'
+Plug 'nanotee/nvim-lua-guide'
 
 " Editing
 Plug 'rhysd/clever-f.vim'             " hit `f` to repeat search
