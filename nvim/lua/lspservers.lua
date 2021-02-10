@@ -59,6 +59,8 @@ do
       return t "<C-n>"
     elseif snippetNvim or snippets_nvim.has_active_snippet() then
       return "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
+    elseif vim.api.nvim_eval([[ UltiSnips#CanJumpForwards() ]]) == 1 then
+      return t "<cmd>call UltiSnips#JumpForwards()<CR>"
     else
       return t "<Tab>"
     end
@@ -69,6 +71,8 @@ do
       return t "<C-p>"
     -- elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
     --   return t "<Plug>(vsnip-jump-prev)"
+    elseif vim.api.nvim_eval([[ UltiSnips#CanJumpBackwards() ]]) == 1 then
+      return t "<cmd>call UltiSnips#JumpBackwards()<CR>"
     else
       return t "<S-Tab>"
     end
@@ -85,6 +89,12 @@ do
       end
 
       return t "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
+    elseif vim.api.nvim_eval([[ UltiSnips#CanExpandSnippet() ]]) == 1 then
+      if autocompleteOpen then
+        vim.fn['compe#close']('<C-e>')
+      end
+
+      return t "<cmd>call UltiSnips#ExpandSnippet()<CR>"
     else
       -- return [[ <C-R>=compe#confirm('<CR>')<CR> ]]
       -- return t "<cmd>lua return expand_ultisnip_or_compe_confirm()<CR>"
