@@ -1,3 +1,14 @@
+global !p
+
+def camel_to_snake(name):
+	if not name:
+		return ""
+
+	name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+	return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
+
+endglobal
+
 snippet tsig "extends T::Sig"
 extend T::Sig
 endsnippet
@@ -41,6 +52,18 @@ snippet params "class SomethingParams < T::Struct ... end"
 class ${1:Something}Params < T::Struct
 	$0
 end
+endsnippet
+
+snippet enum "class MyEnum < T::Enum ... end"
+class ${1:Something} < T::Enum
+	enums do
+		${2:EnumValue} = new('`!p snip.rv = t[2]`')
+	end
+end
+endsnippet
+
+snippet enumvalue "Value = new('Value')"
+${1:EnumValue} = new('`!p snip.rv = t[1]`')
 endsnippet
 
 snippet const "const :name, Type, default: x"
