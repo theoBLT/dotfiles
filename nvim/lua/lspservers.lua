@@ -212,15 +212,5 @@ lspconfig.sumneko_lua.setup({
   },
 })
 
--- Sorbet
-lspconfig.sorbet.setup({
-  cmd = {
-    "pay",
-    "exec",
-    "scripts/bin/typecheck",
-    "--lsp",
-    "--enable-all-experimental-lsp-features",
-  },
-  root_dir = util.root_pattern("sorbet", ".git"),
-  settings = {},
-})
+-- Sorbet lsp for Stripe, if it exists
+pcall(function() require('stripe.lsp') end)
