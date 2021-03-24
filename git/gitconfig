@@ -159,3 +159,5 @@
 	smudge = git-lfs smudge -- %f
 [gc]
 	writecommitGraph = true
+[feature]
+	manyFiles = 1
