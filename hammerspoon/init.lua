@@ -43,6 +43,7 @@ end
 -- vim
 vim
   :disableForApp('Alacritty')
+  :disableForApp('Obsidian')
   :disableForApp('Code')
   :disableForApp('Terminal')
   :disableForApp('Tuple')
