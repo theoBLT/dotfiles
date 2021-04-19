@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, rustPlatform, ... }:
 
 {
   # Let Home Manager install and manage itself.
@@ -29,5 +29,8 @@
     pkgs.neovim-nightly
     pkgs.gitAndTools.gitstatus
     (import ./ddcctl.nix { pkgs = pkgs; })
+    (import ./proximity-sort.nix { lib = lib; pkgs = pkgs; })
+    pkgs.cargo
+    pkgs.rustc
   ];
 }

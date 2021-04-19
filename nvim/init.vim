@@ -401,7 +401,7 @@ let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 function! g:FzfFilesSource()
   let l:base = fnamemodify(expand('%'), ':h:.:S')
-  let l:proximity_sort_path = $HOME . '/.cargo/bin/proximity-sort'
+  let l:proximity_sort_path = $HOME . '/.nix-profile/bin/proximity-sort'
 
   let l:source_command = "rg --files --hidden --glob '!{node_modules/*,.git/*}'"
 
