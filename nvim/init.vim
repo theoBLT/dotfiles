@@ -273,7 +273,6 @@ Plug 'kyazdani42/nvim-web-devicons'  " fancy icons
 Plug 'RRethy/vim-illuminate'         " highlight duplicate words
 Plug 'drzel/vim-line-no-indicator'   " nice scroll indicator
 
-Plug 'sheerun/vim-polyglot'
 Plug 'rodjek/vim-puppet'
 Plug 'cappyzawa/starlark.vim'
 
