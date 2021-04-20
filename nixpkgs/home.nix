@@ -26,6 +26,7 @@
   ];
 
   home.packages = [
+    pkgs.tree-sitter
     pkgs.neovim-nightly
     pkgs.gitAndTools.gitstatus
     (import ./ddcctl.nix { pkgs = pkgs; })
