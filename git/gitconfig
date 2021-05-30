@@ -64,7 +64,8 @@
   r = remote -v                     # show remotes (verbose)
 
   # fetch a remote branch
-  rbranch = !git fetch origin +$1:origin/$1 && git checkout -b $1 origin/$1
+  rbranch = !git fetch origin +$1:origin/$1
+  co-origin = !git checkout -b $1 origin/$1
 
   # Quick sync (non-interactive mode)
   qsync = !git fetch origin master && git rebase --no-keep-empty origin/master
