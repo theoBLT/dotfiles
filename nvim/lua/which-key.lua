@@ -31,6 +31,7 @@ vim.g.which_key_space = {
   ['g']    = {
     ['name'] = '+git',
     ['b']    = 'blame',
+    ['g']    = 'neogit',
     ['m']    = 'show-commit-message',
     ['s']    = 'status',
   },

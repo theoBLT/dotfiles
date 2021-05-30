@@ -207,6 +207,7 @@ Plug 'Konfekt/vim-alias'
 Plug 'nanotee/nvim-lua-guide'         " additional help under :h nvim-lua-guide
 Plug 'liuchengxu/vim-which-key'       " context menu when hitting leader key(s)
 Plug 'kevinhwang91/nvim-bqf'          " better quickfix
+Plug 'nvim-lua/plenary.nvim'          " useful Lua functions, e.g. like boost
 
 " Editing
 Plug 'rhysd/clever-f.vim'             " hit `f` to repeat search
@@ -302,6 +303,7 @@ Plug 'rhysd/git-messenger.vim'  " show commit popup with <leader>gm
 Plug 'tpope/vim-fugitive'       " the git plugin
 Plug 'airblade/vim-gitgutter'   " show changed line marks in gutter
 Plug 'tpope/vim-rhubarb'        " enable GHE/Github links with :Gbrowse
+Plug 'TimUntersberger/neogit'
 
 " Vimscript
 Plug 'tpope/vim-scriptease'
@@ -470,6 +472,7 @@ vnoremap <leader>g :GBrowse!<CR>
 
 nnoremap <space>gb :Gblame<CR>
 nnoremap <space>gs :Gstatus<CR>
+nnoremap <space>gg :Neogit<CR>
 
 " Map git-messenger
 let g:git_messenger_no_default_mappings = v:true
@@ -532,8 +535,12 @@ let g:ale_fixers = {
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_disable_lsp = 1
-let g:ale_virtualtext_cursor = 1
-let g:ale_virtualtext_prefix = "      "
+" let g:ale_virtualtext_cursor = 1
+" let g:ale_virtualtext_prefix = "      "
+
+let g:ale_hover_to_floating_preview = 1
+let g:ale_floating_preview = 1
+let g:ale_hover_to_preview = 0
 
 nnoremap <silent> gj :ALENext<cr>
 nnoremap <silent> gk :ALEPrevious<cr>
@@ -602,3 +609,6 @@ let g:limelight_conceal_guifg = '#777777'
 
 " Load Stripe-specific private config
 call SourceIfExists('~/.config/nvim/layers/private/config.vim')
+
+" Load lua/init.lua
+call luaeval('require("init")')
