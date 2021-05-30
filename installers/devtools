@@ -32,6 +32,7 @@ apt_install ack-grep
 brew_install gnu-tar
 brew_install heroku
 brew_install hub
+brew_install gh
 brew_install redis
 
 heroku plugins:install heroku-repo
