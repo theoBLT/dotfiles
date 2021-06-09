@@ -2,8 +2,6 @@
 
 source "${BASH_SOURCE%/*}/shared.sh"
 
-require_installer python
-
 function setup_linux_font_dir() {
   if is_linux; then
     mkdir -p ~/.local/share/fonts
@@ -84,6 +82,8 @@ function setup_and_patch_fontforge() {
 dotheader "Setting up fonts..."
 
 if is_linux; then
+  require_installer python
+
   setup_linux_font_dir
   setup_and_patch_fontforge
   install_nerd_fonts_repo
