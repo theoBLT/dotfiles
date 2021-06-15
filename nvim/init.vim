@@ -210,19 +210,21 @@ Plug 'kevinhwang91/nvim-bqf'          " better quickfix
 Plug 'nvim-lua/plenary.nvim'          " useful Lua functions, e.g. like boost
 
 " Editing
-Plug 'rhysd/clever-f.vim'             " hit `f` to repeat search
+" Plug 'rhysd/clever-f.vim'             " hit `f` to repeat search
 Plug 'romgrk/nvim-treesitter-context' " show function context as you scroll
 Plug 'AndrewRadev/splitjoin.vim'      " split/join single line/multiline
 Plug 'AndrewRadev/switch.vim'         " switch syntaxes around with `gs`
 Plug 'tpope/vim-commentary'           " comment with `gcc`
 Plug 'romainl/vim-cool'               " disable highlights automatically on cursor move
-Plug 'easymotion/vim-easymotion'      " ,,w and ,,b to jump to objects
+" Plug 'easymotion/vim-easymotion'      " ,,w and ,,b to jump to objects
 Plug 'tpope/vim-projectionist'        " alternate files with :AV/:AS
 Plug 'kshenoy/vim-signature'          " show marks in the gutter
 Plug 'itspriddle/vim-stripper'        " strip whitespace on save
 Plug 'tpope/vim-surround'             " cs`' to change `` to '', etc
 Plug 'milkypostman/vim-togglelist'    " <leader>q to toggle quickfix
 Plug 'tpope/vim-abolish'              " snake_case -> camelCase, etc
+Plug 'ggandor/lightspeed.nvim'        " successor to vim-sneak
+Plug 'tpope/vim-repeat'               " remaps .
 
 " Files
 Plug 'danro/rename.vim'
@@ -604,6 +606,21 @@ autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 
 let g:limelight_conceal_guifg = '#777777'
+
+" ================ lightspeed =================
+lua <<LUA
+require('lightspeed').setup({
+  jump_to_first_match = true,
+  jump_on_partial_input_safety_timeout = 400,
+  highlight_unique_chars = false,
+  grey_out_search_area = true,
+  match_only_the_start_of_same_char_seqs = true,
+  limit_ft_matches = 5,
+  full_inclusive_prefix_key = '<c-x>',
+})
+LUA
+
+nmap s <Plug>Lightspeed_s
 
 " ================= Stripe ======================
 
