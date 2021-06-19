@@ -32,9 +32,19 @@ function install_home_manager() {
   home-manager switch
 }
 
+function symlink_nix_machine_dir() {
+  if [[ $(hostname -s) = st-* ]]; then
+    dotsay "@blue@b[[+ Symlinking stripe laptop nix config]]"
+    symlink_dotfile nix/stripe ~/.config/nix
+  else
+    dotsay "@blue@b[[+ Symlinking default nix config]]"
+    symlink_dotfile nix/default ~/.config/nix
+  fi
+}
+
 dotheader "Setting up NixOS..."
 
 symlink_dotfile nixpkgs ~/.config/nixpkgs
-symlink_dotfile nix ~/.config/nix
+symlink_nix_machine_dir
 install_nixos
 install_home_manager
