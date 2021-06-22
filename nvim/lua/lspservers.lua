@@ -194,3 +194,23 @@ lspconfig.sumneko_lua.setup({
 
 -- Sorbet lsp for Stripe, if it exists
 pcall(function() require('stripe.lsp') end)
+
+-- Rust
+
+lspconfig.rust_analyzer.setup({
+  on_attach=on_attach,
+  settings = {
+    ["rust-analyzer"] = {
+      assist = {
+        importGranularity = "module",
+        importPrefix = "by_self",
+      },
+      cargo = {
+        loadOutDirsFromCheck = true
+      },
+      procMacro = {
+        enable = true
+      },
+    }
+  }
+})

@@ -33,5 +33,6 @@
     (import ./proximity-sort.nix { lib = lib; pkgs = pkgs; })
     pkgs.cargo
     pkgs.rustc
+    pkgs.rust-analyzer
   ];
 }
