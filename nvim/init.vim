@@ -238,6 +238,7 @@ Plug 'nvim-lua/lsp-status.nvim'          " provides statusline information for L
 Plug 'hrsh7th/nvim-compe'                " completion engine
 Plug 'onsails/lspkind-nvim'              " add vscode-style icons to completion menu
 Plug 'nathunsmitty/nvim-ale-diagnostic'  " route lsp diagnostics to ALE
+Plug 'ray-x/lsp_signature.nvim'          " floating signature 'as you type'
 
 " Markdown
 Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}  " markdown preview with :Glow
@@ -517,6 +518,9 @@ let g:ale_ruby_rubocop_executable = 'rubocop-daemon-wrapper'
 let g:ale_ruby_rubocop_options = '--display-cop-names'
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save = 1
+
+" only run the linters we specify
+let g:ale_linters_explicit = 1
 
 let g:ale_linters = {
 \ 'javascript': ['eslint'],

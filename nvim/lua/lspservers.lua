@@ -4,6 +4,33 @@ local compe = require('compe')
 local snippets_nvim = require('snippets')
 local lspkind = require('lspkind')
 
+-- Shared on_attach + capabilities
+--
+-- We set these on the `default_config` so we don't have to set up `on_attach`
+-- and `capabilities` for every last LSP.
+local on_attach = function(client, bufnr)
+  lsp_status.on_attach(client, bufnr)
+
+  -- Floating window signature
+  require('lsp_signature').on_attach({
+    debug = false,
+    handler_opts = {
+      border = "single",
+    },
+  })
+
+  -- print(vim.inspect(client.resolved_capabilities))
+end
+
+lspconfig.util.default_config = vim.tbl_extend(
+  "force",
+  lspconfig.util.default_config,
+  {
+    capabilities = lsp_status.capabilities,
+    on_attach = on_attach,
+  }
+)
+
 -- capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- diagnostics setup
