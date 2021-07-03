@@ -1,42 +1,57 @@
 -- Sony WH-1000XM4
 local headphoneDeviceId = "94-db-56-47-6a-86"
-
-local function run(cmd)
-  local result, success = hs.execute(cmd)
-  result = string.gsub(result, "\n$", "")
-
-  return result, success
-end
+local blueUtil = "/usr/local/bin/blueutil"
 
 local function disconnectHeadphones()
-  hs.timer.doAfter(0, function()
-    local cmd = "/usr/local/bin/blueutil --disconnect " .. headphoneDeviceId
-
-    run(cmd)
-    hs.alert("Disconnected headphones")
-  end)
+  hs.task.new(
+    blueUtil,
+    function()
+      hs.alert("Disconnected headphones")
+    end,
+    {
+      "--disconnect",
+      headphoneDeviceId,
+    }
+  ):start()
 end
 
 local function connectHeadphones()
-  hs.timer.doAfter(0, function()
-    local cmd = "/usr/local/bin/blueutil --connect " .. headphoneDeviceId
-
-    run(cmd)
-    hs.alert("Connected headphones")
-  end)
+  hs.task.new(
+    blueUtil,
+    function()
+      hs.alert("Connected headphones")
+    end,
+    {
+      "--connect",
+      headphoneDeviceId,
+    }
+  ):start()
 end
 
-local function areHeadphonesConnected()
-  local result = run("/usr/local/bin/blueutil --is-connected " .. headphoneDeviceId)
-  return result == "1"
+local function checkHeadphonesConnected(fn)
+  hs.task.new(
+    blueUtil,
+    function(_, stdout)
+      stdout = string.gsub(stdout, "\n$", "")
+      local isConnected = stdout == "1"
+
+      fn(isConnected)
+    end,
+    {
+      "--is-connected",
+      headphoneDeviceId,
+    }
+  ):start()
 end
 
 local function toggleHeadphones()
-  if areHeadphonesConnected() then
-    disconnectHeadphones()
-  else
-    connectHeadphones()
-  end
+  checkHeadphonesConnected(function(isConnected)
+    if isConnected then
+      disconnectHeadphones()
+    else
+      connectHeadphones()
+    end
+  end)
 end
 
 hyperKey:bind('b'):toFunction("Toggle 🎧 connection", toggleHeadphones)
