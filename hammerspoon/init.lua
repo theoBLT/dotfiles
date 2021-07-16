@@ -18,6 +18,9 @@ require "headphones"
 require "monitor-switching"
 require "ocr-paste"
 
+-- Require private hammerspoon config if exists
+pcall(require, "private.init")
+
 -- only do vim3 dev on my desktop
 if hs.host.localizedName() == "sorny" then
   -- require "vim3"
