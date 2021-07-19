@@ -15,4 +15,4 @@ local function switchMonitor()
   hs.execute(binary .. " -d 1 -i " .. inputNumber)
 end
 
-hyperKey:bind('m'):toFunction("Switch monitor input", switchMonitor)
+hyperKey:bind('w'):toFunction("Switch monitor input", switchMonitor)

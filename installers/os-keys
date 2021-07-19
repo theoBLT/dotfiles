@@ -30,18 +30,21 @@ function setup_development_spoon_from_git_repo() {
   fi
 }
 
-function setup_spoon_install() {
-  local url="https://github.com/Hammerspoon/Spoons/raw/master/Spoons/SpoonInstall.spoon.zip"
-  local destination=/tmp/SpoonInstall.spoon.zip
+function install_spoon() {
+  local spoon_name=$1
+  local url="https://github.com/Hammerspoon/Spoons/raw/master/Spoons/$spoon_name.spoon.zip"
+  local destination=/tmp/$spoon_name.spoon.zip
   local spoons_dir=$HOME/.hammerspoon/Spoons
 
-  if [ ! -d "$spoons_dir/SpoonInstall.spoon" ]; then
-    dotsay "@blue@b[[+ installing SpoonInstall.spoon ]]"
+  mkdir -p "$spoons_dir"
+
+  if [ ! -d "$spoons_dir/$spoon_name.spoon" ]; then
+    dotsay "@blue@b[[+ installing $spoon_name.spoon ]]"
 
     wget -nv $url -O $destination
     unzip -d $spoons_dir $destination
   else
-    dotsay "+ SpoonInstall.spoon already setup"
+    dotsay "+ $spoon_name.spoon already setup"
   fi
 }
 
@@ -64,6 +67,6 @@ luarocks install luacheck
 luarocks install lcf
 
 symlink_dotfile hammerspoon ~/.hammerspoon
-setup_spoon_install
+install_spoon SpoonInstall
 setup_development_spoon_from_git_repo HyperKey
 setup_development_spoon_from_git_repo VimMode
