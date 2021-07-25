@@ -19,10 +19,10 @@ require "monitor-switching"
 require "ocr-paste"
 
 -- Load this unless we're on my desktop
-if hs.host.localizedName() ~= "sorny" then
+-- if hs.host.localizedName() ~= "sorny" then
   p("Loading zooom2 replacement")
   require "zooom2"
-end
+-- end
 
 -- Require private hammerspoon config if exists
 pcall(require, "private.init")

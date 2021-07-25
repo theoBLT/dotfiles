@@ -22,13 +22,9 @@ drag_type = nil
 drag_event = hs.eventtap.new(
   {
     hs.eventtap.event.types.leftMouseDragged,
-    hs.eventtap.event.types.rightMouseDragged,
   },
   function(event)
     if not dragging_win then return nil end
-
-    local mouse = hs.mouse:getButtons()
-    if not mouse.left then return nil end
 
     local dx = event:getProperty(hs.eventtap.event.properties.mouseEventDeltaX)
     local dy = event:getProperty(hs.eventtap.event.properties.mouseEventDeltaY)
@@ -41,8 +37,6 @@ drag_event = hs.eventtap.new(
       local h1 = sz.h + dy
 
       dragging_win:setSize(w1, h1)
-      -- local topLeft = dragging_win:topLeft()
-      -- dragging_win:setFrame(hs.geometry.new(topLeft.x, topLeft.y, w1, h1), 0)
     end
   end
 )
