@@ -18,13 +18,8 @@ require "headphones"
 require "monitor-switching"
 require "ocr-paste"
 
--- Load this unless we're on my desktop
--- if hs.host.localizedName() ~= "sorny" then
-p("Loading zooom2 replacement")
-Resizer = require "zooom2"
-
-resizer = Resizer:new()
--- end
+-- Resizer = require "zooom2"
+-- resizer = Resizer:new()
 
 -- Require private hammerspoon config if exists
 pcall(require, "private.init")
