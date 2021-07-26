@@ -20,8 +20,10 @@ require "ocr-paste"
 
 -- Load this unless we're on my desktop
 -- if hs.host.localizedName() ~= "sorny" then
-  p("Loading zooom2 replacement")
-  require "zooom2"
+p("Loading zooom2 replacement")
+Resizer = require "zooom2"
+
+resizer = Resizer:new()
 -- end
 
 -- Require private hammerspoon config if exists
