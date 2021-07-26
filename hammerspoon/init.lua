@@ -21,6 +21,8 @@ require "ocr-paste"
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
 sky = SkyRocket:new({
+  disabledApps = {'Alacritty'},
+
   -- Which modifiers to hold to move a window?
   moveModifiers = {'cmd', 'shift'},
 
