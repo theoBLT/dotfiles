@@ -18,9 +18,6 @@ require "headphones"
 require "monitor-switching"
 require "ocr-paste"
 
--- Resizer = require "zooom2"
--- resizer = Resizer:new()
-
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
 sky = SkyRocket:new({
