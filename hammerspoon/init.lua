@@ -21,6 +21,16 @@ require "ocr-paste"
 -- Resizer = require "zooom2"
 -- resizer = Resizer:new()
 
+local SkyRocket = hs.loadSpoon("SkyRocket")
+
+sky = SkyRocket:new({
+  -- Which modifiers to hold to move a window?
+  moveModifiers = {'cmd', 'shift'},
+
+  -- Which modifiers to hold to resize a window?
+  resizeModifiers = {'ctrl', 'shift'},
+})
+
 -- Require private hammerspoon config if exists
 pcall(require, "private.init")
 
