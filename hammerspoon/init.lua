@@ -40,6 +40,7 @@ end
 
 require "spotify"
 require "github"
+require "rich-link-copy"
 require "qmk-layer-indicator"
 
 local vim = VimMode:new()
