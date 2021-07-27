@@ -10,24 +10,24 @@ superKey
   :bind('k'):toFunction('Send window top', wm.topHalf)
   :bind('j'):toFunction('Send window bottom', wm.bottomHalf)
 
--- Pops the visible Chrome tab into a new browser window
-local function popoutChromeTab()
-  hs.application.launchOrFocus('/Applications/Google Chrome.app')
-
-  local chrome = hs.appfinder.appFromName("Google Chrome")
-  local moveTab = {'Tab', 'Move Tab to New Window'}
-
-  chrome:selectMenuItem(moveTab)
-end
-
--- popout the current chrome tab and view 50-50 side by side
-superKey:bind(']'):toFunction("Chrome tab 50-50", function()
+-- Pops the visible Chrome tab into a new browser window next to the current one
+local function popoutChromeTabSideBySide()
   -- Move current window to the left half
   wm.leftHalf()
 
   hs.timer.doAfter(100 / 1000, function()
-    -- Pop out the current tab and move it to the right
-    popoutChromeTab()
+    -- Pop out the current tab
+    hs.application.launchOrFocus('/Applications/Google Chrome.app')
+
+    local chrome = hs.appfinder.appFromName("Google Chrome")
+    local moveTab = {'Tab', 'Move Tab to New Window'}
+
+    chrome:selectMenuItem(moveTab)
+
+    -- Move it to the right of the screen
     wm.rightHalf()
   end)
-end)
+end
+
+-- Bind this to super + ]
+superKey:bind(']'):toFunction("Chrome tab 50-50", popoutChromeTabSideBySide)
