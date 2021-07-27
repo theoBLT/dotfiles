@@ -233,12 +233,4 @@ module.topDown = function ()
   end
 end
 
-superKey
-  :bind('c'):toFunction('Center window', module.centerOnScreen)
-  :bind('m'):toFunction('Maximize window', module.maximizeWindow)
-  :bind('h'):toFunction('Send window left', module.leftHalf)
-  :bind('l'):toFunction('Send window right', module.rightHalf)
-  :bind('k'):toFunction('Send window top', module.topHalf)
-  :bind('j'):toFunction('Send window bottom', module.bottomHalf)
-
 return module
