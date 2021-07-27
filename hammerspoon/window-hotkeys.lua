@@ -1,3 +1,5 @@
+-- window-management.lua provides all the interesting functions we need to
+-- bind these hotkeys
 local wm = require('window-management')
 
 superKey
