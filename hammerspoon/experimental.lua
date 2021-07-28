@@ -644,16 +644,13 @@ hs.hotkey.bind({'cmd', 'alt', 'ctrl'}, 'n', function()
     local dy = -1 * math.random(0, 2) -- nudge up a bit randomly
 
     local moveStart = hs.timer.absoluteTime()
-    -- window:move({dx, dy}, nil, false, 0)
-    local frame = window:frame()
-    local newFrame = hs.geometry.rect(
-      frame.x + dx,
-      frame.y + dy,
-      frame.w,
-      frame.h
-    )
 
-    window:setFrame(newFrame)
+    local frame = window:frame()
+
+    window:setTopLeft({
+      frame.x + dx,
+      frame.y + dy
+    })
 
     local moveEnd = hs.timer.absoluteTime()
 
