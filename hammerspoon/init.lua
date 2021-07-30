@@ -17,6 +17,7 @@ require "contextual-modal"
 require "headphones"
 require "monitor-switching"
 require "ocr-paste"
+require "zoom"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
