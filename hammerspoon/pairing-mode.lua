@@ -1,10 +1,12 @@
--- local function enableDoNotDisturb()
---   hs.execute("defaults -currentHost write ~/Library/Preferences/ByHost/com.apple.notificationcenterui doNotDisturb -boolean true")
---   hs.execute("defaults -currentHost write ~/Library/Preferences/ByHost/com.apple.notificationcenterui doNotDisturbDate -date \"`date -u +\"%Y-%m-%d %H:%M:%S +000\"`\"")
---   hs.execute("killall NotificationCenter")
--- end
+local function isRunningBigSur()
+  -- This command returns a string like "10.14.6" or "11.4.1"
+  local result = hs.execute("sw_vers -productVersion")
 
-local function enableDoNotDisturb()
+  -- Check if the version starts with "11" - if so, we're on Big Sur.
+  return result:sub(1, 2) == "11"
+end
+
+local function enableDoNotDisturbBigSur()
   hs.osascript.applescript(
     [[
 set checkboxName to "Do Not
@@ -27,14 +29,28 @@ end tell
   )
 end
 
+local function enableDoNotDisturb()
+  if isRunningBigSur() then
+    enableDoNotDisturbBigSur()
+  else
+    local commands = {
+      "defaults -currentHost write ~/Library/Preferences/ByHost/com.apple.notificationcenterui doNotDisturb -boolean true",
+      "defaults -currentHost write ~/Library/Preferences/ByHost/com.apple.notificationcenterui doNotDisturbDate -date \"`date -u +\"%Y-%m-%d %H:%M:%S +000\"`\"",
+      "killall NotificationCenter"
+    }
+
+    hs.execute(table.concat(commands, " && "))
+  end
+end
+
 local function enablePairingMode()
   enableDoNotDisturb()
 
   -- close embarrassing personal apps
-  hs.execute("killall Signal")
   hs.execute("killall Messages")
+  hs.execute("killall Signal")
 
-  hs.alert("Entering pairing mode")
+  hs.alert.show("Entering pairing mode")
 end
 
 hyperKey:bind('p'):toFunction("Enable pairing mode", enablePairingMode)
