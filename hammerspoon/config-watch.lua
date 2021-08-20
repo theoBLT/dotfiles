@@ -2,26 +2,22 @@
 --                            ** For Debug **                           --
 -- -----------------------------------------------------------------------
 
-function reloadConfig()
-  hs.reload()
-  hs.alert.show('Config reloaded')
-end
+local hammerspoonDir = os.getenv("HOME") .. "/.hammerspoon/"
 
-function watchConfig(files)
+configWatcher = hs.pathwatcher.new(hammerspoonDir, function(files)
   local doReload = false
 
   for _, file in pairs(files) do
+    -- If we saved a .lua file, we want to reload.
     if file:sub(-4) == ".lua" then
       doReload = true
     end
   end
 
   if doReload then
-    reloadConfig()
+    hs.reload()
   end
-end
+end)
 
-hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 
--- Sometimes auto-reload is not working
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "n", reloadConfig)
+configWatcher:start()
