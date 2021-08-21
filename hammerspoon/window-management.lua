@@ -1,236 +1,263 @@
--- -----------------------------------------------------------------------
---                         ** Something Global **                       --
--- -----------------------------------------------------------------------
-  -- Comment out this following line if you wish to see animations
-local windowMeta = {}
-local window = require "hs.window"
+-- Turn off animations.
 hs.window.animationDuration = 0
 
-local grid = require "hs.grid"
-grid.setMargins('0, 0')
+-- No margins between windows.
+hs.grid.setMargins('0, 0')
 
-local module = {}
-
--- Set screen watcher, in case you connect a new monitor, or unplug a monitor
-screens = {}
-screenArr = {}
-
-local screenwatcher = hs.screen.watcher.new(function()
-  screens = hs.screen.allScreens()
-end)
-
-screenwatcher:start()
-
--- Construct list of screens
-indexDiff = 0
-for index=1,#hs.screen.allScreens() do
-  local xIndex,yIndex = hs.screen.allScreens()[index]:position()
-  screenArr[xIndex] = hs.screen.allScreens()[index]
-end
-
--- Find lowest screen index, save to indexDiff if negative
-hs.fnutils.each(screenArr, function(e)
-  local currentIndex = hs.fnutils.indexOf(screenArr, e)
-  if currentIndex < 0 and currentIndex < indexDiff then
-    indexDiff = currentIndex
-  end
-end)
-
--- Set screen grid depending on resolution
-  -- TODO: set grid according to pixels
-for _index,screen in pairs(hs.screen.allScreens()) do
-  if screen:frame().w / screen:frame().h > 2 then
-    -- 10 * 4 for ultra wide screen
-    grid.setGrid('10 * 4', screen)
-  else
-    if screen:frame().w < screen:frame().h then
-      -- 4 * 8 for vertically aligned screen
-      grid.setGrid('4 * 8', screen)
+local function setGridForScreens()
+  -- Set screen grid depending on resolution
+  for _, screen in pairs(hs.screen.allScreens()) do
+    if screen:frame().w / screen:frame().h > 2 then
+      -- 10 * 4 for ultra wide screen
+      hs.grid.setGrid('10 * 4', screen)
     else
-      -- 8 * 4 for normal screen
-      grid.setGrid('8 * 4', screen)
+      if screen:frame().w < screen:frame().h then
+        -- 4 * 8 for vertically aligned screen
+        hs.grid.setGrid('4 * 8', screen)
+      else
+        -- 8 * 4 for normal screen
+        hs.grid.setGrid('8 * 4', screen)
+      end
     end
   end
 end
 
--- Some constructors, just for programming
-function Cell(x, y, w, h)
-  return hs.geometry(x, y, w, h)
-end
+-- Call this once on config load.
+setGridForScreens()
+
+-- Set screen watcher, in case you connect a new monitor, or unplug a monitor
+local screenWatcher = hs.screen.watcher.new(function()
+  setGridForScreens()
+end)
+
+screenWatcher:start()
+
+-- Create a handy struct to hold the current window/screen and their grids.
+local windowMeta = {}
 
 -- Bind new method to windowMeta
 function windowMeta.new()
-  local self = setmetatable(windowMeta, {
-    -- Treate table like a function
-    -- Event listener when windowMeta() is called
-    __call = function (cls, ...)
-      return cls.new(...)
-    end,
-  })
+  local self = {}
 
-  self.window = window.focusedWindow()
-  self.screen = window.focusedWindow():screen()
-  self.windowGrid = grid.get(self.window)
-  self.screenGrid = grid.getGrid(self.screen)
+  self.window = hs.window.focusedWindow()
+  self.screen = self.window:screen()
+  self.windowGrid = hs.grid.get(self.window)
+  self.screenGrid = hs.grid.getGrid(self.screen)
 
   return self
 end
 
--- -----------------------------------------------------------------------
---                   ** ALERT: GEEKS ONLY, GLHF  :C **                  --
---            ** Keybinding configurations locate at bottom **          --
--- -----------------------------------------------------------------------
+--------------------------------------
+-- Configure module functions
+--------------------------------------
 
+local module = {}
+
+-- Maximizes a window to fit the entire grid.
 module.maximizeWindow = function ()
   local this = windowMeta.new()
   hs.grid.maximizeWindow(this.window)
 end
 
+-- Centers a window in the middle of the screen.
 module.centerOnScreen = function ()
   local this = windowMeta.new()
   this.window:centerOnScreen(this.screen)
 end
 
+-- Throws a window 1 screen to the left
 module.throwLeft = function ()
   local this = windowMeta.new()
   this.window:moveOneScreenWest()
 end
 
+-- Throws a window 1 screen to the right
 module.throwRight = function ()
   local this = windowMeta.new()
   this.window:moveOneScreenEast()
 end
 
+-- 1. Moves a window all the way left
+-- 2. Resizes it to take up the left half of the screen (grid)
 module.leftHalf = function ()
   local this = windowMeta.new()
-  local cell = Cell(0, 0, 0.5 * this.screenGrid.w, this.screenGrid.h)
-  grid.set(this.window, cell, this.screen)
+  local cell = hs.geometry(0, 0, 0.5 * this.screenGrid.w, this.screenGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
+-- 1. Moves a window all the way right
+-- 2. Resizes it to take up the right half of the screen (grid)
 module.rightHalf = function ()
   local this = windowMeta.new()
-  local cell = Cell(0.5 * this.screenGrid.w, 0, 0.5 * this.screenGrid.w, this.screenGrid.h)
-  grid.set(this.window, cell, this.screen)
+  local cell = hs.geometry(0.5 * this.screenGrid.w, 0, 0.5 * this.screenGrid.w, this.screenGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
--- Windows-like cycle left
-module.cycleLeft = function ()
-  local this = windowMeta.new()
-  -- Check if this window is on left or right
-  if this.windowGrid.x == 0 then
-    local currentIndex = hs.fnutils.indexOf(screenArr, this.screen)
-    local previousScreen = screenArr[(currentIndex - indexDiff - 1) % #hs.screen.allScreens() + indexDiff]
-    this.window:moveToScreen(previousScreen)
-    module.rightHalf()
-  else
-    module.leftHalf()
-  end
-end
-
--- Windows-like cycle right
-module.cycleRight = function ()
-  local this = windowMeta.new()
-  -- Check if this window is on left or right
-  if this.windowGrid.x == 0 then
-    module.rightHalf()
-  else
-    local currentIndex = hs.fnutils.indexOf(screenArr, this.screen)
-    local nextScreen = screenArr[(currentIndex - indexDiff + 1) % #hs.screen.allScreens() + indexDiff]
-    this.window:moveToScreen(nextScreen)
-    module.leftHalf()
-  end
-end
-
+-- 1. Moves a window all the way to the top
+-- 2. Resizes it to take up the top half of the screen (grid)
 module.topHalf = function ()
   local this = windowMeta.new()
-  local cell = Cell(0, 0, this.screenGrid.w, 0.5 * this.screenGrid.h)
-  grid.set(this.window, cell, this.screen)
+  local cell = hs.geometry(0, 0, this.screenGrid.w, 0.5 * this.screenGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
+-- 1. Moves a window all the way to the bottom
+-- 2. Resizes it to take up the bottom half of the screen (grid)
 module.bottomHalf = function ()
   local this = windowMeta.new()
-  local cell = Cell(0, 0.5 * this.screenGrid.h, this.screenGrid.w, 0.5 * this.screenGrid.h)
-  grid.set(this.window, cell, this.screen)
+  local cell = hs.geometry(0, 0.5 * this.screenGrid.h, this.screenGrid.w, 0.5 * this.screenGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.rightToLeft = function ()
+-- Shrinks a window's size horizontally to the left.
+module.shrinkLeft = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w - 1, this.windowGrid.h)
-  if this.windowGrid.w > 1 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Small Enough :)")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w - 1, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.rightToRight = function ()
+-- Grows a window's size horizontally to the right.
+module.growRight = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w + 1, this.windowGrid.h)
-  if this.windowGrid.w < this.screenGrid.w - this.windowGrid.x then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Touching Right Edge :|")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w + 1, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.bottomUp = function ()
+-- Shrinks a window's size vertically up.
+module.shrinkUp = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h - 1)
-  if this.windowGrid.h > 1 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Small Enough :)")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h - 1)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.bottomDown = function ()
+-- Grows a window's size vertically down.
+module.growDown = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h + 1)
-  if this.windowGrid.h < this.screenGrid.h - this.windowGrid.y then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Touching Bottom Edge :|")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h + 1)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.leftToLeft = function ()
+module.nudgeLeft = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x - 1, this.windowGrid.y, this.windowGrid.w + 1, this.windowGrid.h)
-  if this.windowGrid.x > 0 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Touching Left Edge :|")
-  end
+  local cell = hs.geometry(this.windowGrid.x - 1, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.leftToRight = function ()
+module.nudgeRight = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x + 1, this.windowGrid.y, this.windowGrid.w - 1, this.windowGrid.h)
-  if this.windowGrid.w > 1 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Small Enough :)")
-  end
+  local cell = hs.geometry(this.windowGrid.x + 1, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.topUp = function ()
+module.nudgeUp = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y - 1, this.windowGrid.w, this.windowGrid.h + 1)
-  if this.windowGrid.y > 0 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Touching Top Edge :|")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y - 1, this.windowGrid.w, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
 
-module.topDown = function ()
+module.nudgeDown = function()
   local this = windowMeta.new()
-  local cell = Cell(this.windowGrid.x, this.windowGrid.y + 1, this.windowGrid.w, this.windowGrid.h - 1)
-  if this.windowGrid.h > 1 then
-    grid.set(this.window, cell, this.screen)
-  else
-    hs.alert.show("Small Enough :)")
-  end
+  local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y + 1, this.windowGrid.w, this.windowGrid.h)
+
+  hs.grid.set(this.window, cell, this.screen)
 end
+
+-- module.leftToLeft = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x - 1, this.windowGrid.y, this.windowGrid.w + 1, this.windowGrid.h)
+
+--   if this.windowGrid.x > 0 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Touching Left Edge :|")
+--   end
+-- end
+
+-- module.leftToRight = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x + 1, this.windowGrid.y, this.windowGrid.w - 1, this.windowGrid.h)
+
+--   if this.windowGrid.w > 1 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Small Enough :)")
+--   end
+-- end
+
+-- module.rightToLeft = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w - 1, this.windowGrid.h)
+
+--   if this.windowGrid.w > 1 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Small Enough :)")
+--   end
+-- end
+
+-- module.rightToRight = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w + 1, this.windowGrid.h)
+--   if this.windowGrid.w < this.screenGrid.w - this.windowGrid.x then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Touching Right Edge :|")
+--   end
+-- end
+
+-- -- Resizes the window from the bottom edge, in the up direction (making it smaller).
+-- module.bottomUp = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h - 1)
+
+--   if this.windowGrid.h > 1 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Small Enough :)")
+--   end
+-- end
+
+-- -- Resizes the window from the bottom edge, in the down direction (making it larger).
+-- module.resizeDown = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h + 1)
+--   if this.windowGrid.h < this.screenGrid.h - this.windowGrid.y then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Touching Bottom Edge :|")
+--   end
+-- end
+
+-- -- Resizes the window from the top edge, in the up direction (making it larger).
+-- module.topUp = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y - 1, this.windowGrid.w, this.windowGrid.h + 1)
+--   if this.windowGrid.y > 0 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Touching Top Edge :|")
+--   end
+-- end
+
+-- module.topDown = function ()
+--   local this = windowMeta.new()
+--   local cell = hs.geometry(this.windowGrid.x, this.windowGrid.y + 1, this.windowGrid.w, this.windowGrid.h - 1)
+--   if this.windowGrid.h > 1 then
+--     hs.grid.set(this.window, cell, this.screen)
+--   else
+--     hs.alert.show("Small Enough :)")
+--   end
+-- end
 
 return module

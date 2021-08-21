@@ -99,11 +99,11 @@ function getCurrentPositionAsync(callbackFn)
   end)
 end
 
-hs.hotkey.bind(super, 'u', function()
-  getCurrentPositionAsync(function(position)
-    logger.i("Got position " .. inspect(position))
-  end)
-end)
+-- hs.hotkey.bind(super, 'u', function()
+--   getCurrentPositionAsync(function(position)
+--     logger.i("Got position " .. inspect(position))
+--   end)
+-- end)
 
 hs.hotkey.bind(super, '9', function()
   local startTimeNs = hs.timer.absoluteTime()
@@ -626,52 +626,52 @@ local appWatcher = hs.application.watcher.new(function(applicationName, event, h
   end
 end)
 
-hs.hotkey.bind({'cmd', 'alt', 'ctrl'}, 'n', function()
-  math.randomseed(os.time())
+-- hs.hotkey.bind({'cmd', 'alt', 'ctrl'}, 'n', function()
+--   math.randomseed(os.time())
 
-  local results = {}
-  local logger = hs.logger.new('move', 'debug')
+--   local results = {}
+--   local logger = hs.logger.new('move', 'debug')
 
-  -- We're going to move the current focused window
-  local window = hs.window.focusedWindow()
+--   -- We're going to move the current focused window
+--   local window = hs.window.focusedWindow()
 
-  local startTime = hs.timer.absoluteTime()
+--   local startTime = hs.timer.absoluteTime()
 
-  for i = 1, 40 do
-    local loopStart = hs.timer.absoluteTime()
+--   for i = 1, 40 do
+--     local loopStart = hs.timer.absoluteTime()
 
-    local dx = -1 * math.random(2, 15) -- move left a random number of px
-    local dy = -1 * math.random(0, 2) -- nudge up a bit randomly
+--     local dx = -1 * math.random(2, 15) -- move left a random number of px
+--     local dy = -1 * math.random(0, 2) -- nudge up a bit randomly
 
-    local moveStart = hs.timer.absoluteTime()
+--     local moveStart = hs.timer.absoluteTime()
 
-    local frame = window:frame()
+--     local frame = window:frame()
 
-    window:setTopLeft({
-      frame.x + dx,
-      frame.y + dy
-    })
+--     window:setTopLeft({
+--       frame.x + dx,
+--       frame.y + dy
+--     })
 
-    local moveEnd = hs.timer.absoluteTime()
+--     local moveEnd = hs.timer.absoluteTime()
 
-    table.insert(results, {
-      dx = dx,
-      dy = dy,
-      start = loopStart,
-      move = moveEnd - moveStart,
-    })
-  end
+--     table.insert(results, {
+--       dx = dx,
+--       dy = dy,
+--       start = loopStart,
+--       move = moveEnd - moveStart,
+--     })
+--   end
 
-  logger.d("Moved " .. tostring(#results) .. " times:")
+--   logger.d("Moved " .. tostring(#results) .. " times:")
 
-  -- print timing results
-  for i, event in ipairs(results) do
-    local eventMs = (event.start - startTime) / 100000
-    local moveMs = event.move / 100000
+--   -- print timing results
+--   for i, event in ipairs(results) do
+--     local eventMs = (event.start - startTime) / 100000
+--     local moveMs = event.move / 100000
 
-    logger.d("  Event " .. tostring(i) .. ": time = " .. tostring(eventMs) .. "ms, move = " .. moveMs .. "ms, dx = " .. event.dx .. "px, dy = " .. event.dy .. "px")
-  end
-end)
+--     logger.d("  Event " .. tostring(i) .. ": time = " .. tostring(eventMs) .. "ms, move = " .. moveMs .. "ms, dx = " .. event.dx .. "px, dy = " .. event.dy .. "px")
+--   end
+-- end)
 
 
 -- registerApplicationWatcher(hs.application.frontmostApplication())
