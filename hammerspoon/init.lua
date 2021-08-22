@@ -45,6 +45,11 @@ require "github"
 require "rich-link-copy"
 require "qmk-layer-indicator"
 
+-- Testing for course
+-- local WhichKey = require('which-key')
+-- local cmdKey = WhichKey:new({'cmd'})
+-- cmdKey:bind('t'):toFunction('Hi', function() hs.alert.show('hi') end)
+
 local vim = VimMode:new()
 
 hs.chooser.globalCallback = function(chooser, eventName)
