@@ -18,6 +18,7 @@ require "headphones"
 require "monitor-switching"
 require "ocr-paste"
 require "zoom"
+require "text-expander"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
