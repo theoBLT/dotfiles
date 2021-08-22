@@ -119,7 +119,7 @@ function Overlay:_buildCanvas()
     canvas:insertElement(
       {
         type = 'text',
-        text = entry.key,
+        text = string.upper(entry.key),
         action = 'fill',
         frame = {
           x = startX,

@@ -48,7 +48,7 @@ end
 
 function WhichKey:_bind(key, bindKey, binding)
   table.insert(self.bindings, {
-    key = string.upper(key),
+    key = key,
     bindKey = bindKey,
     binding = binding
   })

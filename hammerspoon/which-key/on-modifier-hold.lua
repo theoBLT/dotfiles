@@ -1,7 +1,4 @@
 local function onModifierHold(modifiers, timeoutMs, onHold, onRelease)
-  p("got modifiers")
-  p(modifiers)
-
   local state = {
     held = false,
     holdTimer = nil,
@@ -17,9 +14,7 @@ local function onModifierHold(modifiers, timeoutMs, onHold, onRelease)
   end
 
   state.tap = hs.eventtap.new(
-    {
-      hs.eventtap.event.types.flagsChanged,
-    },
+    { hs.eventtap.event.types.flagsChanged },
     function(event)
       local type = event:getType()
       local containsFlags = event:getFlags():containExactly(modifiers)
