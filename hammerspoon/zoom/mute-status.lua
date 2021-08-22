@@ -14,6 +14,10 @@ local MuteStatus = {}
 function MuteStatus:new()
   local status = {
     isMuted = nil, -- starts as nil, unset
+    colors = {
+      unmuted = rgba(153, 255, 162, 1.0),
+      muted = rgba(255, 160, 153, 1.0),
+    },
     indexes = {
       background = 1,
       icon = 2,
@@ -76,7 +80,7 @@ function MuteStatus:new()
       action = 'fill',
       text = "Muted",
       textAlignment = "center",
-      textColor = rgba(255, 255, 255, 1.0),
+      textColor = status.colors.muted,
       textFont = "Helvetica Bold",
       textSize = 14,
       frame = {
@@ -176,7 +180,7 @@ function MuteStatus:setMuted(muted)
     self.canvas:elementAttribute(
       self.indexes.muteText,
       'textColor',
-      rgba(255, 255, 255, 1.0)
+      self.colors.muted
     )
   else
     self.canvas:elementAttribute(
@@ -190,7 +194,7 @@ function MuteStatus:setMuted(muted)
     self.canvas:elementAttribute(
       self.indexes.muteText,
       'textColor',
-      rgba(255, 165, 0, 1.0)
+      self.colors.unmuted
     )
   end
 end

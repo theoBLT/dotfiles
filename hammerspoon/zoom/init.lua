@@ -28,7 +28,7 @@ end
 
 muteStatus = MuteStatus:new()
 
-muteWatcher = hs.timer.new(0.1, function()
+muteWatcher = hs.timer.new(0.25, function()
   muteStatus:setMuted(isZoomMuted())
 end)
 

@@ -1,4 +1,3 @@
--- Turn off animations.
 hs.window.animationDuration = 0
 
 -- No margins between windows.
