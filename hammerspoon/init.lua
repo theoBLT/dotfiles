@@ -19,6 +19,7 @@ require "monitor-switching"
 require "ocr-paste"
 require "zoom"
 require "text-expander"
+require "course"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
