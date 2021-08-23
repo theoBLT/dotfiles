@@ -2,6 +2,8 @@ local buildCanvas = require('which-key.build-canvas')
 
 local Overlay = {}
 
+-- Takes in a table of key bindings so we can pass them along to
+-- buildCanvas() later.
 function Overlay:new(bindings)
   local overlay = {
     bindings = bindings or {},
