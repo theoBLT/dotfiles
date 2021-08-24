@@ -2,11 +2,27 @@ ReadLater = {}
 
 ReadLater.menu = hs.menubar.new()
 ReadLater.menu:setIcon(hs.image.imageFromPath(os.getenv('HOME') .. '/.hammerspoon/read-later/book.png'))
-
+ReadLater.articlesPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
 ReadLater.articles = {}
 
 local saveCurrentTabArticle = nil
 local buildMenu = nil
+
+local function readArticlesFromDisk()
+  local file = io.open(ReadLater.articlesPath, 'r')
+
+  if file then
+    local contents = file:read("*all")
+    file:close()
+
+    ReadLater.articles = hs.json.decode(contents) or {}
+    buildMenu()
+  end
+end
+
+local function writeArticlesToDisk()
+  hs.json.write(ReadLater.articles, ReadLater.articlesPath, true, true)
+end
 
 local function openUrl(url)
   local task = hs.task.new(
@@ -27,10 +43,21 @@ local function removeArticle(article)
   end)
 
   buildMenu()
+  writeArticlesToDisk()
 end
 
 local function isChromeRunning()
   return not not hs.application.find('Google Chrome')
+end
+
+local function readArticle(article)
+  openUrl(article.url)
+  removeArticle(article)
+end
+
+local function readRandomArticle()
+  local index = math.random(1, #ReadLater.articles)
+  readArticle(ReadLater.articles[index])
 end
 
 buildMenu = function()
@@ -50,10 +77,9 @@ buildMenu = function()
   else
     for _, article in ipairs(ReadLater.articles) do
       table.insert(items, {
-        title = article.title .. "\nhi",
+        title = article.title,
         fn = function()
-          openUrl(article.url)
-          removeArticle(article)
+          readArticle(article)
         end,
         menu = {
           {
@@ -75,11 +101,14 @@ buildMenu = function()
     end,
   })
 
+  table.insert(items, {
+    title = "Read random article",
+    fn = readRandomArticle,
+  })
+
   ReadLater.menu:setMenu(items)
   ReadLater.menu:setTitle("(" .. tostring(#ReadLater.articles) .. ")")
 end
-
-buildMenu()
 
 saveCurrentTabArticle = function()
   -- if not isChromeRunning() then
@@ -124,9 +153,14 @@ saveCurrentTabArticle = function()
     url = url,
   })
 
+  writeArticlesToDisk()
   buildMenu()
 
   hs.alert("Saved " .. title)
 end
 
 superKey:bind('s'):toFunction('Read later', saveCurrentTabArticle)
+
+----
+
+readArticlesFromDisk()
