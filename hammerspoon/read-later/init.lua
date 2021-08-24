@@ -95,7 +95,7 @@ buildMenu = function()
 
   table.insert(items, { title = "-" })
   table.insert(items, {
-    title = "Save current tab",
+    title = "Save current tab          (⌘⌥⌃ S)",
     fn = function()
       saveCurrentTabArticle()
     end,
