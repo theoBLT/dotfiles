@@ -111,14 +111,6 @@ buildMenu = function()
 end
 
 saveCurrentTabArticle = function()
-  -- if not isChromeRunning() then
-  --   return
-  -- else
-  --   p("HI")
-  -- end
-
-  -- hs.application.launchOrFocus('Google Chrome')
-
   local script = [[
     tell application "Google Chrome"
       get title of active tab of first window
@@ -127,18 +119,8 @@ saveCurrentTabArticle = function()
 
   local _, title = hs.osascript.applescript(script)
 
-  p(title)
-
   -- remove trailing garbage from window title
   title = string.gsub(title, "- - Google Chrome.*", "")
-
-  -- local encodedTitle = ""
-
-  -- -- encode the title as html entities like (&#107;&#84;), so that we can
-  -- -- print out unicode characters inside of `getStyledTextFromData`.
-  -- for _, code in utf8.codes(title) do
-  --   encodedTitle = encodedTitle .. "&#" .. code .. ";"
-  -- end
 
   script = [[
     tell application "Google Chrome"
