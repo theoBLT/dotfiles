@@ -1,6 +1,18 @@
 local MuteStatus = require('zoom.mute-status')
 
-local function isZoomMuted()
+local statuses = {
+  muted = "muted",
+  unmuted = "unmuted",
+  notMeeting = "notMeeting",
+}
+
+local function getStatus()
+  local zoomApp = hs.application.find('zoom.us')
+
+  if not zoomApp or not zoomApp:findMenuItem({"Meeting", "Fullscreen"}) then
+    return statuses.notMeeting
+  end
+
   local script = [[
     property btnTitle : "Mute audio"
 
@@ -23,16 +35,27 @@ local function isZoomMuted()
 
   local _, value = hs.osascript.applescript(script)
 
-  return value == "Muted"
+  if value == "Muted" then
+    return statuses.muted
+  elseif value == "Unmuted" then
+    return statuses.unmuted
+  else
+    return statuses.notMeeting
+  end
 end
 
 muteStatus = MuteStatus:new()
 
 muteWatcher = hs.timer.new(0.25, function()
-  muteStatus:setMuted(isZoomMuted())
-end)
+  local status = getStatus()
 
-muteWatcher:start()
+  if status == statuses.notMeeting then
+    muteStatus:hide()
+  else
+    muteStatus:show()
+    muteStatus:setMuted(status == statuses.muted)
+  end
+end)
 
 zoomAppWatcher = hs.application.watcher.new(function(applicationName, eventType)
   if applicationName ~= "zoom.us" then return end
@@ -45,6 +68,10 @@ zoomAppWatcher = hs.application.watcher.new(function(applicationName, eventType)
 end)
 
 zoomAppWatcher:start()
+
+if hs.application.find('zoom.us') then
+  muteWatcher:start()
+end
 
 hyperKey:bind('z'):toFunction('Toggle mute status', function()
   muteStatus:toggle()

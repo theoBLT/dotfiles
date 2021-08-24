@@ -219,6 +219,8 @@ function MuteStatus:setMuted(muted)
 end
 
 function MuteStatus:show()
+  if self.canvas:isShowing() then return end
+
   self:moveToCorner()
 
   -- fade in 200ms
@@ -226,6 +228,8 @@ function MuteStatus:show()
 end
 
 function MuteStatus:hide()
+  if not self.canvas:isShowing() then return end
+
   -- fade out 200ms
   self.canvas:hide(0.2)
 end
