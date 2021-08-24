@@ -161,7 +161,26 @@ function MuteStatus:new()
     status.indexes.hideHotkeyText
   )
 
+  -- When the monitor changes (switch from laptop to external monitor, etc) we
+  -- should make sure we reposition the UI element to sit in the corner
+  -- correctly.
+  status.screenWatcher = hs.screen.watcher.new(function()
+    status:moveToCorner()
+  end)
+
+  status.screenWatcher:start()
+
   return status
+end
+
+function MuteStatus:moveToCorner()
+  local screenWidth = hs.screen.primaryScreen():frame().w
+  local canvasWidth = self.canvas:frame().w
+
+  self.canvas:topLeft({
+    x = screenWidth - canvasWidth - 15,
+    y = 40,
+  })
 end
 
 function MuteStatus:setMuted(muted)
@@ -200,6 +219,8 @@ function MuteStatus:setMuted(muted)
 end
 
 function MuteStatus:show()
+  self:moveToCorner()
+
   -- fade in 200ms
   self.canvas:show(0.2)
 end
