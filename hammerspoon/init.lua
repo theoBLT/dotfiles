@@ -21,6 +21,7 @@ require "zoom"
 require "text-expander"
 require "course"
 require "read-later"
+require "go-links"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
@@ -84,6 +85,22 @@ vim:enableBetaFeature('fallback_only_urls')
 vim:setFallbackOnlyUrlPatterns({
   "docs.google.com",
 })
+
+hs.hotkey.bind(hyper, '7', function()
+  hs.eventtap.keyStroke({'cmd'}, 'l')
+  hs.eventtap.keyStrokes("https://admin.corp.stripe.com/migrations/new", 0)
+  hs.eventtap.keyStroke({}, "return", 0)
+end)
+
+hs.hotkey.bind(hyper, '8', function()
+  hs.eventtap.keyStrokes("replace_shipment_references_with_shipping_rate_references")
+  hs.eventtap.keyStroke({}, "return", 0)
+  hs.eventtap.keyStroke({}, "tab", 0)
+  hs.eventtap.keyStroke({}, "tab", 0)
+  hs.eventtap.keyStroke({}, "tab", 0)
+  hs.eventtap.keyStroke({}, "tab", 0)
+  hs.eventtap.keyStroke({'cmd'}, "v", 0)
+end)
 
 -- If you want the screen to dim (a la Flux) when you enter normal mode
 -- flip this to true.
