@@ -21,7 +21,6 @@ require "zoom"
 require "text-expander"
 require "course"
 require "read-later"
-require "go-links"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
