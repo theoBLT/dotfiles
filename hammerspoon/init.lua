@@ -20,6 +20,7 @@ require "ocr-paste"
 require "zoom"
 require "text-expander"
 require "course"
+require "read-later"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
