@@ -34,8 +34,10 @@ end)
 zoomAppWatcher:start()
 
 if hs.application.find('zoom.us') then
-  muteWatcher:start()
+  muteStatus:show()
   muteStatus:setMuted(statuses.getStatus() == statuses.muted)
+
+  muteWatcher:start()
 end
 
 hyperKey:bind('z'):toFunction('Toggle mute status', function()
