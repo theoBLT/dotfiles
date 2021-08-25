@@ -2,28 +2,33 @@ ReadLater = {}
 
 ReadLater.menu = hs.menubar.new()
 ReadLater.menu:setIcon(hs.image.imageFromPath(os.getenv('HOME') .. '/.hammerspoon/read-later/book.png'))
+ReadLater.menu:setTitle("(0)")
 
-ReadLater.articlesPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
 ReadLater.articles = {}
 
 local saveCurrentTabArticle = nil
-local buildMenu = nil
+local updateMenu = nil
+
+--- sync functions
+ReadLater.jsonSyncPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
 
 local function readArticlesFromDisk()
-  local file = io.open(ReadLater.articlesPath, 'r')
+  local file = io.open(ReadLater.jsonSyncPath, 'r')
 
   if file then
     local contents = file:read("*all")
     file:close()
 
     ReadLater.articles = hs.json.decode(contents) or {}
-    buildMenu()
+    updateMenu()
   end
 end
 
 local function writeArticlesToDisk()
-  hs.json.write(ReadLater.articles, ReadLater.articlesPath, true, true)
+  hs.json.write(ReadLater.articles, ReadLater.jsonSyncPath, true, true)
 end
+
+--- read/remove functions
 
 local function openUrl(url)
   local task = hs.task.new(
@@ -38,19 +43,6 @@ local function openUrl(url)
   task:start()
 end
 
-local function removeArticle(article)
-  ReadLater.articles = hs.fnutils.filter(ReadLater.articles, function(savedArticle)
-    return savedArticle.url ~= article.url
-  end)
-
-  buildMenu()
-  writeArticlesToDisk()
-end
-
-local function isChromeRunning()
-  return not not hs.application.find('Google Chrome')
-end
-
 local function readArticle(article)
   openUrl(article.url)
   removeArticle(article)
@@ -61,15 +53,27 @@ local function readRandomArticle()
   readArticle(ReadLater.articles[index])
 end
 
-buildMenu = function()
+local function removeArticle(article)
+  ReadLater.articles = hs.fnutils.filter(ReadLater.articles, function(savedArticle)
+    return savedArticle.url ~= article.url
+  end)
+
+  updateMenu()
+  writeArticlesToDisk()
+end
+
+--- menu code
+
+updateMenu = function()
   local items = {
     {
       title = "ReadLater",
       disabled = true
     },
-    -- Add a special divider line
-    { title = "-" },
   }
+
+  -- Add a divider line
+  table.insert(items, { title = "-" })
 
   if #ReadLater.articles == 0 then
     table.insert(items, {
@@ -112,33 +116,48 @@ buildMenu = function()
   ReadLater.menu:setTitle("(" .. tostring(#ReadLater.articles) .. ")")
 end
 
-saveCurrentTabArticle = function()
-  local script = [[
-    tell application "Google Chrome"
-      get title of active tab of first window
-    end tell
-  ]]
+local function getCurrentArticle()
+  if not hs.application.find('Google Chrome') then
+    -- Chrome isn't running right now.
+    return nil
+  end
 
-  local _, title = hs.osascript.applescript(script)
+  local _, title = hs.osascript.applescript(
+    [[
+      tell application "Google Chrome"
+        get title of active tab of first window
+      end tell
+    ]]
+  )
 
   -- Remove trailing garbage from window title
   title = string.gsub(title, "- - Google Chrome.*", "")
 
-  script = [[
-    tell application "Google Chrome"
-      get URL of active tab of first window
-    end tell
-  ]]
+  local _, url = hs.osascript.applescript(
+    [[
+      tell application "Google Chrome"
+        get URL of active tab of first window
+      end tell
+    ]]
+  )
 
-  local _, url = hs.osascript.applescript(script)
-
-  table.insert(ReadLater.articles, {
-    title = title,
+  return {
     url = url,
-  })
+    title = title,
+  }
+end
+
+saveCurrentTabArticle = function()
+  article = getCurrentArticle()
+
+  if not article then
+    return
+  end
+
+  table.insert(ReadLater.articles, article)
 
   writeArticlesToDisk()
-  buildMenu()
+  updateMenu()
 
   hs.alert("Saved " .. title)
 end
@@ -147,4 +166,5 @@ superKey:bind('s'):toFunction('Read later', saveCurrentTabArticle)
 
 ----
 
+updateMenu()
 readArticlesFromDisk()
