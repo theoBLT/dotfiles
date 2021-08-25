@@ -9,9 +9,9 @@ local function rgba(r, g, b, a)
   }
 end
 
-local MuteStatus = {}
+local MuteUI = {}
 
-function MuteStatus:new()
+function MuteUI:new()
   local status = {
     isMuted = nil, -- starts as nil, unset
     colors = {
@@ -173,7 +173,7 @@ function MuteStatus:new()
   return status
 end
 
-function MuteStatus:moveToCorner()
+function MuteUI:moveToCorner()
   local screenWidth = hs.screen.primaryScreen():frame().w
   local canvasWidth = self.canvas:frame().w
 
@@ -183,7 +183,7 @@ function MuteStatus:moveToCorner()
   })
 end
 
-function MuteStatus:setMuted(muted)
+function MuteUI:setMuted(muted)
   if isMuted == true and muted then return end
   if isMuted == false and not muted then return end
 
@@ -218,7 +218,7 @@ function MuteStatus:setMuted(muted)
   end
 end
 
-function MuteStatus:show()
+function MuteUI:show()
   if self.canvas:isShowing() then return end
 
   self:moveToCorner()
@@ -227,14 +227,14 @@ function MuteStatus:show()
   self.canvas:show(0.2)
 end
 
-function MuteStatus:hide()
+function MuteUI:hide()
   if not self.canvas:isShowing() then return end
 
   -- fade out 200ms
   self.canvas:hide(0.2)
 end
 
-function MuteStatus:toggle()
+function MuteUI:toggle()
   if self.canvas:isShowing() then
     self:hide()
   else
@@ -242,4 +242,4 @@ function MuteStatus:toggle()
   end
 end
 
-return MuteStatus
+return MuteUI
