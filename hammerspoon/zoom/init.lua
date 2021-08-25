@@ -5,14 +5,19 @@ local statuses = require('zoom.status')
 
 muteStatus = MuteUi:new()
 
-muteWatcher = hs.timer.new(0.25, function()
+muteWatcher = hs.timer.new(2, function()
   local status = statuses.getStatus()
 
   if status == statuses.notMeeting then
     muteStatus:hide()
+
+    muteWatcher:setNextTrigger(2)
   else
     muteStatus:show()
     muteStatus:setMuted(status == statuses.muted)
+
+    -- Switch to checking every 100ms while in a meeting.
+    muteWatcher:setNextTrigger(0.1)
   end
 end)
 
@@ -30,6 +35,7 @@ zoomAppWatcher:start()
 
 if hs.application.find('zoom.us') then
   muteWatcher:start()
+  muteStatus:setMuted(statuses.getStatus() == statuses.muted)
 end
 
 hyperKey:bind('z'):toFunction('Toggle mute status', function()
