@@ -2,6 +2,7 @@ ReadLater = {}
 
 ReadLater.menu = hs.menubar.new()
 ReadLater.menu:setIcon(hs.image.imageFromPath(os.getenv('HOME') .. '/.hammerspoon/read-later/book.png'))
+
 ReadLater.articlesPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
 ReadLater.articles = {}
 
@@ -66,6 +67,7 @@ buildMenu = function()
       title = "ReadLater",
       disabled = true
     },
+    -- Add a special divider line
     { title = "-" },
   }
 
@@ -119,7 +121,7 @@ saveCurrentTabArticle = function()
 
   local _, title = hs.osascript.applescript(script)
 
-  -- remove trailing garbage from window title
+  -- Remove trailing garbage from window title
   title = string.gsub(title, "- - Google Chrome.*", "")
 
   script = [[
