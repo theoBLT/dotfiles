@@ -64,7 +64,27 @@ local function slackThread()
   end)
 end
 
--- slackModal:bind({'ctrl'}, 'h', nil, focusSlackMessageBox, nil, focusSlackMessageBox)
+local function findBox()
+  local app = hs.application.find("Slack")
+  if not app then return end
+
+  local ax = hs.axuielement.applicationElement(app)
+  local query = hs.axuielement.searchCriteriaFunction({
+    attribute = "AXType",
+    value = "AXTextArea",
+  })
+
+  ax:elementSearch(
+    function(msg, results, count)
+      p(msg)
+      p(results)
+      p(count)
+    end,
+    query
+  )
+end
+
+-- slackModal:bind({'ctrl'}, 'h', nil, findBox, nil, findBox)
 slackModal:bind({'ctrl'}, 'j', nil, slackDown, nil, slackDown)
 slackModal:bind({'ctrl'}, 'k', nil, slackUp, nil, slackUp)
 slackModal:bind({'ctrl'}, 't', nil, slackThread, nil, slackThread)
