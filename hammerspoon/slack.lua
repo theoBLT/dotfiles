@@ -1,33 +1,59 @@
-local function clearCursorFromMessageBox()
+local function getSlackWindow()
   local app = hs.application.find("Slack")
   if not app then return end
 
   local window = app:mainWindow()
   window:focus()
 
-  local frame = window:frame()
-  local click = {
-    x = frame.x + frame.w - 100,
-    y = frame.y + 20,
-  }
+  return window
+end
 
+local function fakeClick(point)
   local previousMousePosition = hs.mouse.absolutePosition()
-
-  hs.eventtap.leftClick(click, 0)
+  hs.eventtap.leftClick(point, 0)
   hs.mouse.absolutePosition(previousMousePosition) -- restore it
 end
 
-local function focusSlackMessageBox()
-  clearCursorFromMessageBox()
+local function clearCursorToMainPane()
+  local window = getSlackWindow()
 
-  -- hs.eventtap.keyStroke({'shift'}, 'F6', 0)
+  local frame = window:frame()
+  local click = {
+    x = frame.x + frame.w / 3,
+    y = frame.y + frame.h - 8,
+  }
+
+  fakeClick(click)
+end
+
+local function clearCursorToThreadPane()
+  local window = getSlackWindow()
+
+  local frame = window:frame()
+  local click = {
+    x = frame.x + frame.w - 20,
+    y = frame.y + frame.h - 8,
+  }
+
+  fakeClick(click)
+end
+
+local function focusMainMessageBox()
+  clearCursorToMainPane()
+  hs.eventtap.keyStroke({'shift'}, 'F6', 0)
+end
+
+-- TODO this doesn't work
+local function focusThreadMessageBox()
+  clearCursorToThreadPane()
+  -- hs.eventtap.keyStroke({}, 'F6', 0)
 end
 
 local function openSlackReminder()
   hs.application.launchOrFocus("Slack")
 
   hs.timer.doAfter(0.3, function()
-    focusSlackMessageBox()
+    focusMainMessageBox()
 
     hs.timer.doAfter(0.3, function()
       hs.eventtap.keyStrokes("/remind me at ")
@@ -48,7 +74,7 @@ local function slackDown()
 end
 
 local function slackThread()
-  focusSlackMessageBox()
+  focusMainMessageBox()
   slackUp()
 
   hs.eventtap.keyStroke({}, 't', 0)
@@ -84,9 +110,10 @@ local function findBox()
   )
 end
 
--- slackModal:bind({'ctrl'}, 'h', nil, findBox, nil, findBox)
+-- slackModal:bind({'ctrl'}, 'h', nil, focusMainMessageBox, nil, focusMainMessageBox)
 slackModal:bind({'ctrl'}, 'j', nil, slackDown, nil, slackDown)
 slackModal:bind({'ctrl'}, 'k', nil, slackUp, nil, slackUp)
+-- slackModal:bind({'ctrl'}, 'l', nil, focusThreadMessageBox, nil, focusThreadMessageBox)
 slackModal:bind({'ctrl'}, 't', nil, slackThread, nil, slackThread)
 
 slackWatcher = hs.application.watcher.new(function(applicationName, eventType)
