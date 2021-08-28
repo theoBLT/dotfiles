@@ -32,6 +32,7 @@ slackModal:bind({'ctrl'}, 'h', nil, focus.mainMessageBox, nil, focus.mainMessage
 slackModal:bind({'ctrl'}, 'j', nil, slackDown, nil, slackDown)
 slackModal:bind({'ctrl'}, 'k', nil, slackUp, nil, slackUp)
 slackModal:bind({'ctrl'}, 'l', nil, focus.threadMessageBox, nil, focus.threadMessageBox)
+slackModal:bind({'ctrl'}, 'r', nil, startSlackReminder, nil, startSlackReminder)
 slackModal:bind({'ctrl'}, 't', nil, openSlackThread, nil, openSlackThread)
 
 slackWatcher = hs.application.watcher.new(function(applicationName, eventType)
@@ -45,5 +46,3 @@ slackWatcher = hs.application.watcher.new(function(applicationName, eventType)
 end)
 
 slackWatcher:start()
-
-hyperKey:bind('r'):toFunction("Slack /remind", startSlackReminder)
