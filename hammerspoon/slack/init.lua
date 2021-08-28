@@ -8,15 +8,11 @@ local function slackDown()
   hs.eventtap.keyStroke({}, 'down', 0)
 end
 
-local function openSlackReminder()
-  hs.application.launchOrFocus("Slack")
+local function startSlackReminder()
+  focus.mainMessageBox()
 
   hs.timer.doAfter(0.3, function()
-    focus.mainMessageBox()
-
-    hs.timer.doAfter(0.3, function()
-      hs.eventtap.keyStrokes("/remind me at ")
-    end)
+    hs.eventtap.keyStrokes("/remind me at ")
   end)
 end
 
@@ -50,4 +46,4 @@ end)
 
 slackWatcher:start()
 
-hyperKey:bind('r'):toFunction("Slack /remind", openSlackReminder)
+hyperKey:bind('r'):toFunction("Slack /remind", startSlackReminder)
