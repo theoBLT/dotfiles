@@ -6,6 +6,11 @@ local function getAxSlackWindow()
   local app = hs.application.find("Slack")
   if not app then return end
 
+  -- Electron apps require this attribute to be set or else you cannot
+  -- read the accessibility tree
+  axApp = hs.axuielement.applicationElement(app)
+  axApp:setAttributeValue('AXManualAccessibility', true)
+
   local window = app:mainWindow()
   window:focus()
 
