@@ -1,15 +1,19 @@
 ReadLater = {}
 
+ReadLater.articles = {}
+
 ReadLater.menu = hs.menubar.new()
 ReadLater.menu:setIcon(hs.image.imageFromPath(os.getenv('HOME') .. '/.hammerspoon/read-later/book.png'))
-ReadLater.menu:setTitle("(0)")
-
-ReadLater.articles = {}
 
 local saveCurrentTabArticle = nil
 local updateMenu = nil
 
---- sync functions
+--------- sync functions
+
+-- Where do you want to persist your articles to disk?
+--
+-- If you use Dropbox and save it to your ~/Dropbox folder, it will work across
+-- multiple computers. Otherwise, you can choose a different path.
 ReadLater.jsonSyncPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
 
 local function readArticlesFromDisk()
@@ -43,6 +47,15 @@ local function openUrl(url)
   task:start()
 end
 
+local function removeArticle(article)
+  ReadLater.articles = hs.fnutils.filter(ReadLater.articles, function(savedArticle)
+    return savedArticle.url ~= article.url
+  end)
+
+  updateMenu()
+  writeArticlesToDisk()
+end
+
 local function readArticle(article)
   openUrl(article.url)
   removeArticle(article)
@@ -51,15 +64,6 @@ end
 local function readRandomArticle()
   local index = math.random(1, #ReadLater.articles)
   readArticle(ReadLater.articles[index])
-end
-
-local function removeArticle(article)
-  ReadLater.articles = hs.fnutils.filter(ReadLater.articles, function(savedArticle)
-    return savedArticle.url ~= article.url
-  end)
-
-  updateMenu()
-  writeArticlesToDisk()
 end
 
 --- menu code
@@ -75,6 +79,7 @@ updateMenu = function()
   -- Add a divider line
   table.insert(items, { title = "-" })
 
+  -- Render each article
   if #ReadLater.articles == 0 then
     table.insert(items, {
       title = "No more articles to read",
@@ -82,6 +87,7 @@ updateMenu = function()
     })
   else
     for _, article in ipairs(ReadLater.articles) do
+      -- Add each article to the list of menu items
       table.insert(items, {
         title = article.title,
         fn = function()
@@ -102,9 +108,7 @@ updateMenu = function()
   table.insert(items, { title = "-" })
   table.insert(items, {
     title = "Save current tab          (⌘⌥⌃ S)",
-    fn = function()
-      saveCurrentTabArticle()
-    end,
+    fn = saveCurrentTabArticle,
   })
 
   table.insert(items, {
@@ -112,16 +116,34 @@ updateMenu = function()
     fn = readRandomArticle,
   })
 
-  ReadLater.menu:setMenu(items)
   ReadLater.menu:setTitle("(" .. tostring(#ReadLater.articles) .. ")")
+  ReadLater.menu:setMenu(items)
 end
 
+-- Get the URL and <title> of the current Chrome tab, and return it as
+--
+--   {
+--     url = "https://...",
+--     title = "An interesting article",
+--   }
+--
+-- Returns `nil` if there are no open Chrome tabs.
 local function getCurrentArticle()
   if not hs.application.find('Google Chrome') then
     -- Chrome isn't running right now.
     return nil
   end
 
+  -- Get the URL of the current tab
+  local _, url = hs.osascript.applescript(
+    [[
+      tell application "Google Chrome"
+        get URL of active tab of first window
+      end tell
+    ]]
+  )
+
+  -- Get the <title> of the current tab.
   local _, title = hs.osascript.applescript(
     [[
       tell application "Google Chrome"
@@ -132,14 +154,6 @@ local function getCurrentArticle()
 
   -- Remove trailing garbage from window title
   title = string.gsub(title, "- - Google Chrome.*", "")
-
-  local _, url = hs.osascript.applescript(
-    [[
-      tell application "Google Chrome"
-        get URL of active tab of first window
-      end tell
-    ]]
-  )
 
   return {
     url = url,
@@ -154,12 +168,16 @@ saveCurrentTabArticle = function()
     return
   end
 
+  -- Save the article
   table.insert(ReadLater.articles, article)
 
-  writeArticlesToDisk()
+  -- Refresh the menubar since we have a new article
   updateMenu()
 
-  hs.alert("Saved " .. title)
+  -- Sync to disk
+  writeArticlesToDisk()
+
+  hs.alert("Saved " .. article.title)
 end
 
 superKey:bind('s'):toFunction('Read later', saveCurrentTabArticle)
@@ -168,3 +186,11 @@ superKey:bind('s'):toFunction('Read later', saveCurrentTabArticle)
 
 updateMenu()
 readArticlesFromDisk()
+
+jsonWatcher = hs.pathwatcher.new(ReadLater.jsonSyncPath, function(paths, flags)
+  if hs.fnutils.contains(paths, ReadLater.jsonSyncPath) then
+    readArticlesFromDisk()
+  end
+end)
+
+jsonWatcher:start()
