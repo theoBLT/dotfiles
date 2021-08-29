@@ -1,187 +1,200 @@
-ReadLater = {}
-
-ReadLater.articles = {}
-
-ReadLater.menu = hs.menubar.new()
-ReadLater.menu:setIcon(hs.image.imageFromPath(os.getenv('HOME') .. '/.hammerspoon/read-later/book.png'))
-
-local saveCurrentTabArticle = nil
-local updateMenu = nil
-
---------- sync functions
-
--- Where do you want to persist your articles to disk?
---
--- If you use Dropbox and save it to your ~/Dropbox folder, it will work across
--- multiple computers. Otherwise, you can choose a different path.
-ReadLater.jsonSyncPath = os.getenv('HOME') .. "/Dropbox/read-later.json"
-
-local function readArticlesFromDisk()
-  local file = io.open(ReadLater.jsonSyncPath, 'r')
-
-  if file then
-    local contents = file:read("*all")
-    file:close()
-
-    ReadLater.articles = hs.json.decode(contents) or {}
-    updateMenu()
-  end
+-- Returns a table with a key down and key up event for a given (mods, key)
+-- key press.
+local function keySequence(mods, key)
+  return {
+    hs.eventtap.event.newKeyEvent(mods, key, true),  -- keydown = true
+    hs.eventtap.event.newKeyEvent(mods, key, false), -- keydown = false
+  }
 end
 
-local function writeArticlesToDisk()
-  hs.json.write(ReadLater.articles, ReadLater.jsonSyncPath, true, true)
-end
+local unshiftedKeymap = {
+  ["!"] = "1",
+  ["@"] = "2",
+  ["#"] = "3",
+  ["$"] = "4",
+  ["%"] = "5",
+  ["^"] = "6",
+  ["&"] = "7",
+  ["*"] = "8",
+  ["("] = "9",
+  [")"] = "0",
+  ["~"] = "`",
+  ["_"] = "-",
+  ["+"] = "=",
+  ["{"] = "[",
+  ["}"] = "]",
+  ["|"] = "\\",
+  ["?"] = "/",
+  ["<"] = ",",
+  [">"] = ".",
+  ["\""] = "'",
+  [":"] = ";",
+}
 
-local function openUrl(url)
-  local task = hs.task.new(
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    nil,
-    function() end, -- noop
-    {
-      url
-    }
-  )
+local shiftedKeymap = {
+  ["1"] = "!",
+  ["2"] = "@",
+  ["3"] = "#",
+  ["4"] = "$",
+  ["5"] = "%",
+  ["6"] = "^",
+  ["7"] = "&",
+  ["8"] = "*",
+  ["9"] = "(",
+  ["0"] = ")",
+  ["`"] = "~",
+  ["-"] = "_",
+  ["="] = "+",
+  ["["] = "{",
+  ["]"] = "}",
+  ["\\"] = "|",
+  ["/"] = "?",
+  [","] = "<",
+  ["."] = ">",
+  ["'"] = "\"",
+  [";"] = ":",
+}
 
-  task:start()
-end
+local snippets = {
+  ["+date"] = function()
+    return os.date("%B %d, %Y", os.time())
+  end,
+  ["+email"] = "d@balatero.com", -- FIXME: replace with your email address!
+  ["+meet"] = "https://zoom.us/12345678",
+}
 
-local function removeArticle(article)
-  ReadLater.articles = hs.fnutils.filter(ReadLater.articles, function(savedArticle)
-    return savedArticle.url ~= article.url
-  end)
-
-  updateMenu()
-  writeArticlesToDisk()
-end
-
-local function readArticle(article)
-  openUrl(article.url)
-  removeArticle(article)
-end
-
-updateMenu = function()
-  local items = {
-    {
-      title = "ReadLater",
-      disabled = true
-    },
+local function buildTrie(snippets)
+  local trie = {
+    expandFn = nil,
+    children = {},
   }
 
-  -- Add a divider line
-  table.insert(items, { title = "-" })
+  for shortcode, snippet in pairs(snippets) do
+    local currentElement = trie
 
-  -- Render each article
-  if #ReadLater.articles == 0 then
-    table.insert(items, {
-      title = "No more articles to read",
-      disabled = true
-    })
-  else
-    for _, article in ipairs(ReadLater.articles) do
-      -- Add each article to the list of menu items
-      table.insert(items, {
-        title = article.title,
-        fn = function()
-          readArticle(article)
-        end,
-        menu = {
-          {
-            title = "Remove article",
-            fn = function()
-              removeArticle(article)
-            end,
-          },
-        }
-      })
+    -- Loop through each character in the snippet keyword and insert a tree
+    -- of nodes into the trie.
+    for i = 1, #shortcode do
+      local char = shortcode:sub(i, i)
+
+      currentElement.children[char] = currentElement.children[char] or {
+        expandFn = nil,
+        children = {},
+      }
+
+      currentElement = currentElement.children[char]
+
+      -- If we're on the last character, save off the snippet function
+      -- to the node as well.
+      local isLastChar = i == #shortcode
+
+      if isLastChar then
+        if type(snippet) == "function" then
+          -- If the snippet is a function, just save it off to be called
+          -- later.
+          currentElement.expandFn = snippet
+        else
+          -- If the snippet is a static string, convert it to a function so that
+          -- everything is uniformly a function.
+          currentElement.expandFn = function()
+            return snippet
+          end
+        end
+      end
     end
   end
 
-  table.insert(items, { title = "-" })
-  table.insert(items, {
-    title = "Save current tab          (⌘⌥⌃ S)",
-    fn = saveCurrentTabArticle,
-  })
-
-  table.insert(items, {
-    title = "Read random article",
-    fn = readRandomArticle,
-  })
-
-  ReadLater.menu:setTitle("(" .. tostring(#ReadLater.articles) .. ")")
-  ReadLater.menu:setMenu(items)
+  return trie
 end
 
--- Get the URL and <title> of the current Chrome tab, and return it as
---
---   {
---     url = "https://...",
---     title = "An interesting article",
---   }
---
--- Returns `nil` if there are no open Chrome tabs.
-local function getCurrentArticle()
-  if not hs.application.find('Google Chrome') then
-    -- Chrome isn't running right now.
-    return nil
+local snippetTrie = buildTrie(snippets)
+local numPresses = 0
+local currentTrieNode = snippetTrie
+
+snippetWatcher = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
+  local keyPressed = hs.keycodes.map[event:getKeyCode()]
+
+  if event:getFlags():containExactly({'shift'}) then
+    -- Convert the keycode to the shifted version of the key,
+    -- e.g. "=" turns into "+", etc.
+    keyPressed = shiftedKeymap[keyPressed] or keyPressed
   end
 
-  -- Get the URL of the current tab
-  local _, url = hs.osascript.applescript(
-    [[
-      tell application "Google Chrome"
-        get URL of active tab of first window
-      end tell
-    ]]
-  )
+  local shouldFireSnippet = keyPressed == "return" or keyPressed == "space"
 
-  -- Get the <title> of the current tab.
-  local _, title = hs.osascript.applescript(
-    [[
-      tell application "Google Chrome"
-        get title of active tab of first window
-      end tell
-    ]]
-  )
-
-  -- Remove trailing garbage from window title
-  title = string.gsub(title, "- - Google Chrome.*", "")
-
-  return {
-    url = url,
-    title = title,
-  }
-end
-
-saveCurrentTabArticle = function()
-  article = getCurrentArticle()
-
-  if not article then
-    return
+  local reset = function()
+    currentTrieNode = snippetTrie
+    numPresses = 0
   end
 
-  -- Save the article
-  table.insert(ReadLater.articles, article)
+  if currentTrieNode.expandFn then
+    if shouldFireSnippet then
+      local keyEventsToPost = {}
 
-  -- Refresh the menubar since we have a new article
-  updateMenu()
+      -- Delete backwards however many times a key has been typed, to remove
+      -- the snippet "+keyword"
+      for i = 1, numPresses do
+        keyEventsToPost = hs.fnutils.concat(
+          keyEventsToPost,
+          keySequence({}, 'delete')
+        )
+      end
 
-  -- Sync to disk
-  writeArticlesToDisk()
+      -- Call the snippet's function to get the snippet expansion.
+      local textToWrite = currentTrieNode.expandFn()
 
-  hs.alert("Saved " .. article.title)
-end
+      -- Loop through each character of the expanded snippet, and add it to the
+      -- list of keys to "press".
+      for i = 1, textToWrite:len() do
+        local char = textToWrite:sub(i, i)
+        local flags = {}
 
-superKey:bind('s'):toFunction('Read later', saveCurrentTabArticle)
+        -- If you encounter a shifted character, like "*", you have to convert
+        -- it back to its modifiers + keycode form.
+        --
+        -- Example:
+        --   If char == "*"
+        --   Send `shift + 8` instead.
+        if unshiftedKeymap[char] then
+          flags = {'shift'}
+          char = unshiftedKeymap[char]
+        end
 
-----
+        keyEventsToPost = hs.fnutils.concat(
+          keyEventsToPost,
+          keySequence(flags, char)
+        )
+      end
 
-updateMenu()
-readArticlesFromDisk()
+      -- Send along the keypress that activated the snippet (either space or
+      -- return).
+      -- hs.eventtap.keyStroke(event:getFlags(), keyPressed, 0)
+      keyEventsToPost = hs.fnutils.concat(
+        keyEventsToPost,
+        keySequence(event:getFlags(), event:getKeyCode())
+      )
 
-jsonWatcher = hs.pathwatcher.new(ReadLater.jsonSyncPath, function(paths, flags)
-  if hs.fnutils.contains(paths, ReadLater.jsonSyncPath) then
-    readArticlesFromDisk()
+      -- Reset our pointers back to the beginning to get ready for the next
+      -- snippet.
+      reset()
+
+      -- Don't pass thru the original keypress, and return our replacement key
+      -- events instead.
+      return true, keyEventsToPost
+    else
+      reset()
+      return false
+    end
   end
+
+  if currentTrieNode.children[keyPressed] then
+    currentTrieNode = currentTrieNode.children[keyPressed]
+    numPresses = numPresses + 1
+  else
+    reset()
+  end
+
+  return false
 end)
 
-jsonWatcher:start()
+snippetWatcher:start()

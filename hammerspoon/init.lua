@@ -18,7 +18,7 @@ require "headphones"
 require "monitor-switching"
 require "ocr-paste"
 -- require "zoom"
-require "text-expander"
+-- require "text-expander"
 require "course"
 -- require "read-later"
 
