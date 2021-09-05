@@ -278,8 +278,16 @@ function debugElement(currentElement)
   if role == "AXTextField" or role == "AXTextArea" or role == "AXComboBox" then
     logger.i("Currently in text field")
     logger.i(inspect(currentElement:parameterizedAttributeNames()))
+
+    logger.i("param attributes:")
+    logger.i("-----------")
+    for _, name in ipairs(currentElement:parameterizedAttributeNames()) do
+      logger.i(name .. ": " .. inspect(currentElement:parameterizedAttributeValue(name, {})))
+    end
+
     logger.i("attributes:")
     logger.i("-----------")
+    -- p("AXTextMarkerForPosition: " .. inspect(currentElement:parameterizedAttributeValue("AXTextMarkerForPosition", {})))
 
     local attributes = currentElement:allAttributeValues()
 
