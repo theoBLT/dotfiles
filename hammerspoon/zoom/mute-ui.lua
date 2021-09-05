@@ -26,7 +26,8 @@ function MuteUI:new()
       verticalLine = 5,
       toggleHotkeyText = 6,
       hideHotkeyText = 7,
-    }
+    },
+    manuallyToggled = false,
   }
 
   setmetatable(status, self)
@@ -225,6 +226,8 @@ function MuteUI:show()
 
   -- fade in 200ms
   self.canvas:show(0.2)
+
+  self.manuallyToggled = false
 end
 
 function MuteUI:hide()
@@ -232,11 +235,14 @@ function MuteUI:hide()
 
   -- fade out 200ms
   self.canvas:hide(0.2)
+
+  self.manuallyToggled = false
 end
 
 function MuteUI:toggle()
   if self.canvas:isShowing() then
     self:hide()
+    self.manuallyToggled = true
   else
     self:show()
   end

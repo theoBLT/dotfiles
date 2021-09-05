@@ -6,6 +6,11 @@ local statuses = require('zoom.status')
 muteStatus = MuteUi:new()
 
 muteWatcher = hs.timer.new(2, function()
+  if muteStatus.manuallyToggled then
+    muteWatcher:setNextTrigger(2)
+    return
+  end
+
   local status = statuses.getStatus()
 
   if status == statuses.notMeeting then
