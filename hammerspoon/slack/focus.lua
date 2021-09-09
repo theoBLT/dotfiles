@@ -1,4 +1,5 @@
 local find = require('slack.find')
+local debug = require('slack.debug')
 
 ----------
 
@@ -86,5 +87,45 @@ module.threadMessageBox = function(withRetry)
   end
 end
 
+module.leaveChannel = function()
+  local window = getAxSlackWindow()
+  if not window then return end
+
+  local button = find.searchByChain(window, {
+    function(elem) return hasClass(elem, 'p-workspace-layout') end,
+    function(elem)
+      return elem:attributeValue('AXRole') == 'AXPopUpButton' and
+        hasClass(elem, 'p-view_header__big_button--channel')
+    end,
+  })
+
+  if not button then return end
+
+  button:performAction('AXPress')
+
+  leaveButton = nil
+
+  local findLeaveButton = function()
+    return find.searchByChain(window, {
+      function(elem)
+        return elem:attributeValue('AXSubrole') == 'AXApplicationDialog' and
+          hasClass(elem, 'p-about_modal')
+      end,
+      function(elem)
+        return elem:attributeValue('AXRole') == 'AXButton' and
+          elem:attributeValue('AXTitle') == 'Leave channel'
+      end,
+    })
+  end
+
+  local leaveButtonVisible = function()
+    leaveButton = findLeaveButton()
+    return not not leaveButton
+  end
+
+  hs.timer.waitUntil(leaveButtonVisible, function()
+    leaveButton:performAction('AXPress')
+  end)
+end
 
 return module

@@ -1,6 +1,11 @@
 local module = {}
 
 module.printElement = function(element)
+  if not element then
+    p("Element is nil")
+    return
+  end
+
   p(element:attributeValue('AXRole'))
   p("  AXSubrole:         " .. tostring(element:attributeValue('AXSubrole')))
   p("  AXDescription:     " .. tostring(element:attributeValue('AXDescription')))

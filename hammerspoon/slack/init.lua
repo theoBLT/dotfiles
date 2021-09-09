@@ -34,6 +34,7 @@ slackModal:bind({'ctrl'}, 'k', nil, slackUp, nil, slackUp)
 slackModal:bind({'ctrl'}, 'l', nil, focus.threadMessageBox, nil, focus.threadMessageBox)
 slackModal:bind({'ctrl'}, 'r', nil, startSlackReminder, nil, startSlackReminder)
 slackModal:bind({'ctrl'}, 't', nil, openSlackThread, nil, openSlackThread)
+slackModal:bind({'shift','cmd'}, 'delete', nil, focus.leaveChannel, nil, nil)
 
 slackWatcher = hs.application.watcher.new(function(applicationName, eventType)
   if applicationName ~= "Slack" then return end
