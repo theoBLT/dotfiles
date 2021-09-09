@@ -123,8 +123,13 @@ module.leaveChannel = function()
     return not not leaveButton
   end
 
-  hs.timer.waitUntil(leaveButtonVisible, function()
+  local buttonTimer = hs.timer.waitUntil(leaveButtonVisible, function()
     leaveButton:performAction('AXPress')
+  end)
+
+  hs.timer.doAfter(2, function()
+    -- Prevent infinite spinning
+    buttonTimer:stop()
   end)
 end
 
