@@ -21,6 +21,7 @@ require "zoom"
 -- require "text-expander"
 require "course"
 require "autocomplete"
+require "jira-markdown"
 -- require "read-later"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
