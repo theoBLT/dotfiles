@@ -20,7 +20,7 @@ require "ocr-paste"
 require "zoom"
 -- require "text-expander"
 require "course"
-require "autocomplete"
+-- require "autocomplete"
 require "jira-markdown"
 -- require "read-later"
 
