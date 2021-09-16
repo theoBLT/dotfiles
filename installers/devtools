@@ -36,3 +36,5 @@ brew_install gh
 brew_install redis
 
 heroku plugins:install heroku-repo
+
+symlink_dotfile ideavimrc ~/.ideavimrc

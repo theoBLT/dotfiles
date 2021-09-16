@@ -79,6 +79,7 @@ vim
   :disableForApp('iTerm')
   :disableForApp('iTerm2')
   :disableForApp('zoom.us')
+  :disableForApp('IntelliJ IDEA')
 
 vim:enableBetaFeature('block_cursor_overlay')
 
