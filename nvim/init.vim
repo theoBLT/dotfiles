@@ -46,7 +46,7 @@ set winwidth=100
 set clipboard=unnamed
 
 " remap ESC to jk
-inoremap jk <esc>
+" inoremap jk <esc>
 
 "Clear current search highlight by hitting g + /
 nmap <silent> g/ :nohlsearch<CR>
@@ -206,17 +206,14 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'Konfekt/vim-alias'
 Plug 'nanotee/nvim-lua-guide'         " additional help under :h nvim-lua-guide
 Plug 'liuchengxu/vim-which-key'       " context menu when hitting leader key(s)
-Plug 'kevinhwang91/nvim-bqf'          " better quickfix
 Plug 'nvim-lua/plenary.nvim'          " useful Lua functions, e.g. like boost
 
 " Editing
-" Plug 'rhysd/clever-f.vim'             " hit `f` to repeat search
 Plug 'romgrk/nvim-treesitter-context' " show function context as you scroll
 Plug 'AndrewRadev/splitjoin.vim'      " split/join single line/multiline
 Plug 'AndrewRadev/switch.vim'         " switch syntaxes around with `gs`
 Plug 'tpope/vim-commentary'           " comment with `gcc`
 Plug 'romainl/vim-cool'               " disable highlights automatically on cursor move
-" Plug 'easymotion/vim-easymotion'      " ,,w and ,,b to jump to objects
 Plug 'tpope/vim-projectionist'        " alternate files with :AV/:AS
 Plug 'kshenoy/vim-signature'          " show marks in the gutter
 Plug 'itspriddle/vim-stripper'        " strip whitespace on save
@@ -225,6 +222,7 @@ Plug 'milkypostman/vim-togglelist'    " <leader>q to toggle quickfix
 Plug 'tpope/vim-abolish'              " snake_case -> camelCase, etc
 Plug 'ggandor/lightspeed.nvim'        " successor to vim-sneak
 Plug 'tpope/vim-repeat'               " remaps .
+Plug 'max397574/better-escape.nvim'   " faster jk
 
 " Files
 Plug 'danro/rename.vim'
@@ -463,6 +461,11 @@ let splitjoin_ruby_hanging_args = 0
 " highlight marks dynamically based on vim-gitgutter's status
 let g:SignatureMarkTextHLDynamic = 1
 
+lua <<LUA
+require("better_escape").setup({
+  mapping = {"jk"},
+})
+LUA
 
 " =============== version control ================
 
