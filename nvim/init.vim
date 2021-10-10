@@ -299,6 +299,9 @@ Plug 'mileszs/ack.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+
 " Version control
 Plug 'rhysd/git-messenger.vim'  " show commit popup with <leader>gm
 Plug 'tpope/vim-fugitive'       " the git plugin
@@ -364,9 +367,8 @@ let g:ackprg = 'rg --vimgrep --no-heading'
 
 cnoreabbrev Ack Ack!
 
-nnoremap <Leader>a :Ack!<Space>
-nnoremap <Leader>A :Ack!<CR>
-
+" nnoremap <Leader>a :Ack!<Space>
+" nnoremap <Leader>A :Ack!<CR>
 
 " =============== FZF =======================
 
@@ -420,11 +422,16 @@ let g:fzf_preview_cmd = g:plug_home . "/fzf.vim/bin/preview.sh {}"
 noremap <C-b> :Buffers<CR>
 nnoremap <silent> <Leader>f :Rg<CR>
 
-noremap <C-p> :call fzf#vim#files('', { 'source': g:FzfFilesSource(),
-      \ 'options': [
-      \   '--tiebreak=index', '--preview', g:fzf_preview_cmd
-      \  ]})<CR>
+" noremap <C-p> :call fzf#vim#files('', { 'source': g:FzfFilesSource(),
+"       \ 'options': [
+"       \   '--tiebreak=index', '--preview', g:fzf_preview_cmd
+"       \  ]})<CR>
 
+" ================= telescope ====================
+
+noremap <C-p> :Telescope find_files<CR>
+noremap <Leader>a :Telescope live_grep<CR>
+noremap <Leader>A :Telescope grep_string<CR>
 
 " ================= vim-test =====================
 
