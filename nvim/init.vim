@@ -46,7 +46,7 @@ set winwidth=100
 set clipboard=unnamed
 
 " remap ESC to jk
-" inoremap jk <esc>
+inoremap jk <esc>
 
 "Clear current search highlight by hitting g + /
 nmap <silent> g/ :nohlsearch<CR>
@@ -222,7 +222,6 @@ Plug 'milkypostman/vim-togglelist'    " <leader>q to toggle quickfix
 Plug 'tpope/vim-abolish'              " snake_case -> camelCase, etc
 Plug 'ggandor/lightspeed.nvim'        " successor to vim-sneak
 Plug 'tpope/vim-repeat'               " remaps .
-Plug 'max397574/better-escape.nvim'   " faster jk
 
 " Files
 Plug 'danro/rename.vim'
@@ -460,12 +459,6 @@ let splitjoin_ruby_hanging_args = 0
 " vim-signature
 " highlight marks dynamically based on vim-gitgutter's status
 let g:SignatureMarkTextHLDynamic = 1
-
-lua <<LUA
-require("better_escape").setup({
-  mapping = {"jk"},
-})
-LUA
 
 " =============== version control ================
 
