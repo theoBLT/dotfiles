@@ -51,3 +51,6 @@ export FREEZE_REPO="$RESTIC_REPOSITORY:/Freeze"
 if command -v yarn >/dev/null 2>&1; then
   export PATH="$PATH:`yarn global bin`"
 fi
+
+# Don't be helpful
+export HOMEBREW_NO_AUTO_UPDATE=1
