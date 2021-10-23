@@ -171,3 +171,5 @@
 [work "pr"]
 	auto-open-in-chrome = false
 	auto-copy-url-to-clipboard = false
+[help]
+	autocorrect = 0
