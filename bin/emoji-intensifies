@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function command_exists() {
+  command -v $1 > /dev/null
+  return $?
+}
+
+if ! command_exists "convert"; then
+  echo "ImageMagick is missing, please brew install imagemagick"
+  exit 1
+fi
+
 # Generate a `:something-intensifies:` Slack emoji, given a reasonable image
 # input. I recommend grabbing an emoji from https://emojipedia.org/
 
