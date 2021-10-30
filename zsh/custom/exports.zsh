@@ -40,6 +40,8 @@ export PATH="$PATH:$HOME/.emacs.d/bin"
 [[ "$(uname)" == "Linux" ]] && export PYTHON_CONFIGURE_OPTS="--enable-shared"
 
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 
 # Restic/Backblaze
 # restic mount -r $SYNC_REPO ~/backblaze

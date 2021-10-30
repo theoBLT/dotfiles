@@ -9,6 +9,7 @@ function setup_zsh_symlinks() {
   symlink_dotfile zshrc ~/.zshrc
   symlink_dotfile zsh ~/.zsh
   symlink_dotfile zsh/zshenv ~/.zshenv
+  symlink_dotfile zsh/zprofile ~/.zprofile
 }
 
 function zsh_binary() {
@@ -90,6 +91,8 @@ function install_base16_shell() {
 }
 
 dotheader "Setting up ZSH..."
+
+symlink_dotfile profile ~/.profile
 
 brew_install exa
 brew_install neofetch
