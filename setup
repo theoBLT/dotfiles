@@ -4,7 +4,6 @@ source "${BASH_SOURCE%/*}/installers/shared.sh"
 
 require_installer package-manager
 require_installer terminal
-# require_installer tiling
 require_installer mac-app-store
 require_installer mac-custom-apps
 require_installer git
@@ -18,7 +17,3 @@ require_installer neovim
 require_installer backups
 require_installer os-keys
 require_installer audio
-require_installer personal
-require_installer java
-require_installer monitor
-require_installer chat
