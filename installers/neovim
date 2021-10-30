@@ -28,7 +28,7 @@ function install_neovim_mac() {
     brew_tap neovim/neovim
   fi
 
-  brew_install neovim --HEAD
+  brew_install neovim
 }
 
 function install_neovim() {
@@ -128,5 +128,6 @@ install_vim_node_rpc
 ensure_plugin_directory
 install_neovim_plugins
 install_rust
-install_proximity_sort
+# Broken on santa
+# install_proximity_sort
 install_bat

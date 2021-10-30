@@ -23,11 +23,6 @@ function install_python_versions() {
 }
 
 function install_pyenv_virtualenvs() {
-  if [ ! -d $(pyenv root)/plugins/pyenv-virtualenv ]; then
-    git clone https://github.com/yyuu/pyenv-virtualenv.git \
-      $(pyenv root)/plugins/pyenv-virtualenv
-  fi
-
   if ! pyenv virtualenvs | grep -q py2neovim; then
     pyenv virtualenv 2.7.16 py2neovim
     pyenv activate py2neovim
@@ -43,38 +38,13 @@ function install_pyenv_virtualenvs() {
   fi
 }
 
-function install_pyenv() {
-  if ! command_exists "pyenv"; then
-    curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-  fi
-}
-
-function install_pyenv_virtualenv() {
-  local plugin_path="$(pyenv root)/plugins/pyenv-virtualenv"
-
-  if [ ! -d "$plugin_path" ]; then
-    git clone https://github.com/pyenv/pyenv-virtualenv.git "$plugin_path"
-  fi
-}
-
-function force_openssl_to_homebrew() {
-  if [ $(which openssl) == "/usr/local/opt/openssl/bin/openssl" ]; then
-    dotsay "+ Already forced OpenSSL to Homebrew's version"
-  else
-    dotsay "+ Installing OpenSSL from Homebrew..."
-    brew_install openssl
-    brew link openssl --force
-  fi
-}
-
 dotheader "Setting up Python..."
 
-force_openssl_to_homebrew
 brew_install readline
 brew_install xz
 
-install_pyenv
-install_pyenv_virtualenv
+brew_install pyenv
+brew_install pyenv-virtualenv
 load_pyenv
 
 install_python_versions

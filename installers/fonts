@@ -108,6 +108,13 @@ if is_linux; then
     "Fantasque Sans Mono Bold Italic Nerd Font Complete.ttf"
 else
   # disabling for now
-  brew_cask_install homebrew/cask-fonts/font-inconsolatago-nerd-font
-  brew_install font-jetbrains-mono-nerd-font
+  # brew_cask_install homebrew/cask-fonts/font-inconsolatago-nerd-font
+  # brew_install font-jetbrains-mono-nerd-font
+
+  if [ ! -d ~/.nerd-fonts ]; then
+    git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git ~/.nerd-fonts
+
+    cp -v ~/.nerd-fonts/patched-fonts/JetBrainsMono/NoLigatures/*/complete/*.ttf ~/Library/Fonts
+    cp -v ~/.nerd-fonts/patched-fonts/InconsolataGo/*/complete/*.ttf ~/Library/Fonts
+  fi
 fi
