@@ -287,6 +287,7 @@ Plug 'mhartington/oceanic-next'
 Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'bluz71/vim-nightfly-guicolors'
+Plug 'hashivim/vim-terraform'
 
 " Tmux
 Plug 'christoomey/vim-tmux-navigator'
