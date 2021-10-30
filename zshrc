@@ -87,5 +87,5 @@ fi
 
 eval "$(nodenv init -)"
 
-[ -f ~/.fzf.zsh ] && echo "hi" && source ~/.fzf.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
