@@ -64,8 +64,6 @@ antigen theme romkatv/powerlevel10k
 
 antigen apply
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 eval "$(direnv hook zsh)"
 eval "$(fasd --init auto)"
 
@@ -89,4 +87,5 @@ fi
 
 eval "$(nodenv init -)"
 
+[ -f ~/.fzf.zsh ] && echo "hi" && source ~/.fzf.zsh
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
