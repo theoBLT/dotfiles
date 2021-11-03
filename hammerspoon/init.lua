@@ -23,6 +23,7 @@ require "course"
 -- require "autocomplete"
 require "jira-markdown"
 require "read-later"
+require "pull-request-comments"
 
 local SkyRocket = hs.loadSpoon("SkyRocket")
 
