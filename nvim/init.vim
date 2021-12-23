@@ -234,7 +234,6 @@ Plug 'glepnir/lspsaga.nvim'              " code action plugin
 Plug 'nvim-lua/lsp-status.nvim'          " provides statusline information for LSP
 Plug 'hrsh7th/nvim-compe'                " completion engine
 Plug 'onsails/lspkind-nvim'              " add vscode-style icons to completion menu
-Plug 'nathunsmitty/nvim-ale-diagnostic'  " route lsp diagnostics to ALE
 Plug 'ray-x/lsp_signature.nvim'          " floating signature 'as you type'
 
 " Markdown
@@ -258,7 +257,6 @@ Plug 'honza/vim-snippets'
 Plug 'craigmac/vim-vsnip-snippets'
 
 " Syntax checking
-Plug 'dense-analysis/ale'
 
 " Tests
 Plug 'janko-m/vim-test'
@@ -502,51 +500,6 @@ nnoremap <silent> <space>lw  <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 
 " gutter space for lsp info on left
 set signcolumn=yes
-
-" =================== ALE =======================
-
-" ALE config
-let g:ale_javascript_eslint_executable = 'eslint_d'
-let g:ale_javascript_eslint_options = ''
-let g:ale_javascript_eslint_use_global = 1
-
-let g:ale_ruby_rubocop_executable = 'rubocop-daemon-wrapper'
-
-let g:ale_ruby_rubocop_options = '--display-cop-names'
-let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 1
-
-" only run the linters we specify
-let g:ale_linters_explicit = 1
-
-let g:ale_linters = {
-\ 'javascript': ['eslint'],
-\ 'javascript.jsx': ['eslint'],
-\ 'typescript': ['eslint'],
-\ 'typescript.tsx': ['eslint'],
-\ 'ruby': ['rubocop'],
-\}
-
-let g:ale_fixers = {
-\ 'javascript': ['eslint'],
-\ 'javascript.jsx': ['eslint'],
-\ 'typescript': ['eslint'],
-\ 'typescript.tsx': ['eslint'],
-\ 'ruby': ['rubocop'],
-\}
-
-let g:ale_sign_error = '●' " Less aggressive than the default '>>'
-let g:ale_sign_warning = '.'
-let g:ale_disable_lsp = 1
-" let g:ale_virtualtext_cursor = 1
-" let g:ale_virtualtext_prefix = "      "
-
-let g:ale_hover_to_floating_preview = 1
-let g:ale_floating_preview = 1
-let g:ale_hover_to_preview = 0
-
-nnoremap <silent> gj :ALENext<cr>
-nnoremap <silent> gk :ALEPrevious<cr>
 
 " =================== Ruby =====================
 
