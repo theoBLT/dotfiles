@@ -43,8 +43,6 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-require("nvim-ale-diagnostic")
-
 -- Completion
 lspkind.init() -- setup icons
 
