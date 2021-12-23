@@ -257,6 +257,7 @@ Plug 'honza/vim-snippets'
 Plug 'craigmac/vim-vsnip-snippets'
 
 " Syntax checking
+Plug 'folke/trouble.nvim'
 
 " Tests
 Plug 'janko-m/vim-test'
