@@ -1,8 +1,9 @@
-local lspconfig = require('lspconfig')
-local lsp_status = require('lsp-status')
 local compe = require('compe')
-local snippets_nvim = require('snippets')
+local lsp_status = require('lsp-status')
+local lspconfig = require('lspconfig')
 local lspkind = require('lspkind')
+local null_ls = require("null-ls")
+local snippets_nvim = require('snippets')
 local trouble = require('trouble')
 
 trouble.setup({
@@ -150,11 +151,6 @@ vim.lsp.set_log_level("debug")
 -- Setup LSP statusline
 lsp_status.register_progress()
 
--- Flow
-lspconfig.flow.setup({
-  cmd = { 'node_modules/.bin/flow', 'lsp' },
-})
-
 -- Lua
 local sumneko_cmd
 
@@ -195,11 +191,7 @@ lspconfig.sumneko_lua.setup({
   },
 })
 
--- Sorbet lsp for Stripe, if it exists
-pcall(function() require('stripe.lsp') end)
-
 -- Rust
-
 lspconfig.rust_analyzer.setup({
   on_attach=on_attach,
   settings = {
@@ -216,4 +208,62 @@ lspconfig.rust_analyzer.setup({
       },
     }
   }
+})
+
+----------------------------------------
+-- Deal with Ruby and JS specially, since we need different configs for internal
+-- Stripe repos vs. vanilla Ruby/JS repos.
+----------------------------------------
+
+local noFormatting = function(client)
+  client.resolved_capabilities.document_formatting = false
+  client.resolved_capabilities.document_range_formatting = false
+end
+
+local function setupVanillaLspClients()
+  lspconfig.flow.setup({
+    on_attach = noFormatting,
+  })
+
+  lspconfig.sorbet.setup({
+    on_attach = noFormatting,
+    root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
+  })
+
+  null_ls.register({
+    -- TODO: install stylua somehow
+    -- null_ls.builtins.formatting.stylua,
+
+    -- Ruby
+    null_ls.builtins.diagnostics.rubocop,
+    null_ls.builtins.formatting.rubocop.with({
+      args = { "--auto-correct-all", "-f", "quiet", "--stderr", "--stdin", "$FILENAME" },
+    }),
+
+    -- JavaScript, etc.
+    null_ls.builtins.diagnostics.eslint_d,
+    null_ls.builtins.formatting.eslint_d,
+  })
+end
+
+-- Load lsp for Stripe, if it exists
+local _, stripeLsp = pcall(function()
+  return require('stripe.lsp')
+end)
+
+local inStripe = stripeLsp and stripeLsp.setupClients
+
+if inStripe then
+  stripeLsp.setupClients(setupVanillaLspClients)
+else
+  setupVanillaLspClients()
+end
+
+-- Format on save.
+null_ls.setup({
+  on_attach = function(client)
+    if client.resolved_capabilities.document_formatting then
+      vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
+    end
+  end,
 })

@@ -258,7 +258,8 @@ Plug 'honza/vim-snippets'
 Plug 'craigmac/vim-vsnip-snippets'
 
 " Syntax checking
-Plug 'folke/trouble.nvim'
+Plug 'folke/trouble.nvim'                 " pretty list for diagnostics, errors, etc
+Plug 'jose-elias-alvarez/null-ls.nvim'    " Add a null LSP server to hook Rubocop/eslint_d/etc into
 
 " Tests
 Plug 'janko-m/vim-test'
@@ -269,7 +270,7 @@ Plug 'junegunn/limelight.vim'  " dim other paragraphs while writing
 
 " Theming
 Plug 'chrisbra/Colorizer'            " show hex colors in CSS/HTML files
-Plug 'glepnir/galaxyline.nvim'       " fast Lua statusline
+Plug 'dbalatero/galaxyline.nvim'     " fast Lua statusline
 Plug 'kyazdani42/nvim-web-devicons'  " fancy icons
 Plug 'RRethy/vim-illuminate'         " highlight duplicate words
 Plug 'drzel/vim-line-no-indicator'   " nice scroll indicator
