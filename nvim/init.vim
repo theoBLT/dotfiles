@@ -235,6 +235,7 @@ Plug 'nvim-lua/lsp-status.nvim'          " provides statusline information for L
 Plug 'hrsh7th/nvim-compe'                " completion engine
 Plug 'onsails/lspkind-nvim'              " add vscode-style icons to completion menu
 Plug 'ray-x/lsp_signature.nvim'          " floating signature 'as you type'
+Plug 'folke/lsp-colors.nvim'             " fills in missing LSP highlight colors for color schemes
 
 " Markdown
 Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}  " markdown preview with :Glow
