@@ -172,3 +172,5 @@
 	auto-copy-url-to-clipboard = false
 [help]
 	autocorrect = 0
+[work "features"]
+	gh = true
