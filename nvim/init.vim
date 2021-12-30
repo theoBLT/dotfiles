@@ -424,7 +424,7 @@ nnoremap <silent> <Leader>f :Rg<CR>
 noremap <C-p> :call fzf#vim#files('', { 'source': g:FzfFilesSource(),
       \ 'options': [
       \   '--tiebreak=index', '--preview', g:fzf_preview_cmd
-      \  ]})<CR>
+      \  ]})<CR><CR>
 
 
 " ================= vim-test =====================

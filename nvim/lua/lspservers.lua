@@ -198,11 +198,7 @@ lspconfig.sumneko_lua.setup({
   },
 })
 
--- Sorbet lsp for Stripe, if it exists
-pcall(function() require('stripe.lsp') end)
-
 -- Rust
-
 lspconfig.rust_analyzer.setup({
   on_attach=on_attach,
   settings = {
@@ -220,3 +216,22 @@ lspconfig.rust_analyzer.setup({
     }
   }
 })
+
+-- Sorbet lsp for Stripe, if it exists
+function setupVanillaLspClients()
+  lspconfig.sorbet.setup({
+    root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
+  })
+end
+
+local _, stripeLsp = pcall(function()
+  return require('stripe.lsp')
+end)
+
+local inStripe = stripeLsp and stripeLsp.setupClients
+
+if inStripe then
+  stripeLsp.setupClients(setupVanillaLspClients)
+else
+  setupVanillaLspClients()
+end
