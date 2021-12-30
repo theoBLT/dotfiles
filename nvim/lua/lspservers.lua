@@ -4,6 +4,12 @@ local compe = require('compe')
 local snippets_nvim = require('snippets')
 local lspkind = require('lspkind')
 
+local trouble = require('trouble')
+
+trouble.setup({
+  use_diagnostic_signs = true,
+})
+
 -- Shared on_attach + capabilities
 --
 -- We set these on the `default_config` so we don't have to set up `on_attach`

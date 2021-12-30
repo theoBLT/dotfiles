@@ -259,6 +259,7 @@ Plug 'craigmac/vim-vsnip-snippets'
 
 " Syntax checking
 Plug 'dense-analysis/ale'
+Plug 'folke/trouble.nvim'                 " pretty list for diagnostics, errors, etc
 
 " Tests
 Plug 'janko-m/vim-test'
@@ -477,6 +478,15 @@ nnoremap <space>gg :Neogit<CR>
 " Map git-messenger
 let g:git_messenger_no_default_mappings = v:true
 nmap <space>gm <Plug>(git-messenger)
+
+" ================== Trouble ====================
+
+nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+" nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 
 " ==================== LSP ======================
 

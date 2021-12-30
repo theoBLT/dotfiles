@@ -15,6 +15,14 @@ vim.g.which_key_leader = {
   ['q']    = 'toggle-quick-fix',
   ['t']    = 'test-current-file',
   ['T']    = 'test-current-line',
+  ['x']    = {
+    ['name'] = '+trouble',
+    ['d']    = 'document-diagnostics',
+    ['l']    = 'location-list',
+    ['q']    = 'quickfix',
+    ['w']    = 'workspace-diagnostics',
+    ['x']    = 'toggle-between',
+  }
 }
 
 vim.g.which_key_leader[','] = {

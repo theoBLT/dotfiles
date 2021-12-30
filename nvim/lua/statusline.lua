@@ -13,14 +13,6 @@ local function file_readonly()
   return ''
 end
 
-local function get_diagnostic_info()
-  if vim.fn.exists('*coc#rpc#start_server') == 1 then
-    return vim.g.coc_status or ''
-  end
-
-  return ''
-end
-
 function string:split(delimiter)
   local result = { }
   local from  = 1
@@ -298,14 +290,6 @@ addPart(gls.left, {
 })
 
 -- Right Section
-
--- addPart(gls.right, {
---   CocStatus = {
---     provider = get_diagnostic_info,
---     highlight = {colors.green, colors.background},
---     icon = '  🗱'
---   }
--- })
 
 -- LSP status
 lsp_status.config({
