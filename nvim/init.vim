@@ -599,17 +599,17 @@ require('nvim-treesitter.configs').setup {
 LUA
 
 " ================== status line ================
-call luaeval('require("statusline")')
+lua require("statusline")
 
 " ================== snippets ==================
 
 " inoremap <silent><expr> <CR>      compe#confirm('<CR>')
 
 let g:UltiSnipsExpandTrigger = "<nop>"
-call luaeval('require("custom_snippets")')
+lua require("custom_snippets")
 
 " ================= which key ==================
-call luaeval('require("which-key")')
+lua require("which-key")
 
 " ================ writing mode ================
 
@@ -637,4 +637,4 @@ nmap s <Plug>Lightspeed_s
 call SourceIfExists('~/.config/nvim/layers/private/config.vim')
 
 " Load lua/init.lua
-call luaeval('require("init")')
+lua require("init")
