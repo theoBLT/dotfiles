@@ -222,6 +222,7 @@ Plug 'milkypostman/vim-togglelist'    " <leader>q to toggle quickfix
 Plug 'tpope/vim-abolish'              " snake_case -> camelCase, etc
 Plug 'ggandor/lightspeed.nvim'        " successor to vim-sneak
 Plug 'tpope/vim-repeat'               " remaps .
+Plug 'andymass/vim-matchup'           " extended % key matching
 
 " Files
 Plug 'danro/rename.vim'
@@ -270,7 +271,7 @@ Plug 'junegunn/limelight.vim'  " dim other paragraphs while writing
 
 " Theming
 Plug 'chrisbra/Colorizer'            " show hex colors in CSS/HTML files
-Plug 'glepnir/galaxyline.nvim'       " fast Lua statusline
+Plug 'dbalatero/galaxyline.nvim'     " fast Lua statusline
 Plug 'kyazdani42/nvim-web-devicons'  " fancy icons
 Plug 'RRethy/vim-illuminate'         " highlight duplicate words
 Plug 'drzel/vim-line-no-indicator'   " nice scroll indicator
@@ -424,7 +425,7 @@ nnoremap <silent> <Leader>f :Rg<CR>
 noremap <C-p> :call fzf#vim#files('', { 'source': g:FzfFilesSource(),
       \ 'options': [
       \   '--tiebreak=index', '--preview', g:fzf_preview_cmd
-      \  ]})<CR><CR>
+      \  ]})<CR>
 
 
 " ================= vim-test =====================
@@ -520,7 +521,7 @@ let g:ale_javascript_eslint_executable = 'eslint_d'
 let g:ale_javascript_eslint_options = ''
 let g:ale_javascript_eslint_use_global = 1
 
-let g:ale_ruby_rubocop_executable = 'rubocop-daemon-wrapper'
+let g:ale_ruby_rubocop_executable = 'rubocop'
 
 let g:ale_ruby_rubocop_options = '--display-cop-names'
 let g:ale_lint_on_save = 1
@@ -595,6 +596,9 @@ require('nvim-treesitter.configs').setup {
   highlight = { enable = true },
   incremental_selection = { enable = true },
   textobjects = { enable = true },
+  matchup = {
+    enable = true,
+  },
 }
 LUA
 
