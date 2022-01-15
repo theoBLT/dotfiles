@@ -273,6 +273,7 @@ Plug 'janko-m/vim-test'
 " Writing
 Plug 'junegunn/goyo.vim'       " distraction-free writing with :Goyo
 Plug 'junegunn/limelight.vim'  " dim other paragraphs while writing
+Plug 'nvim-orgmode/orgmode'    " emacs org mode clone
 
 " Theming
 Plug 'chrisbra/Colorizer'            " show hex colors in CSS/HTML files
@@ -580,6 +581,17 @@ nnoremap <leader>d :call FlipBindingPry()<CR>
 " ================== treesitter =================
 
 lua <<LUA
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+
+parser_config.org = {
+  install_info = {
+    url = 'https://github.com/milisims/tree-sitter-org',
+    revision = 'f110024d539e676f25b72b7c80b0fd43c34264ef',
+    files = {'src/parser.c', 'src/scanner.cc'},
+  },
+  filetype = 'org',
+}
+
 require('nvim-treesitter.configs').setup {
   ensure_installed = {
     'bash',
@@ -590,6 +602,7 @@ require('nvim-treesitter.configs').setup {
     'json',
     'lua',
     'nix',
+    'org',
     'php',
     'python',
     'ruby',
@@ -597,13 +610,29 @@ require('nvim-treesitter.configs').setup {
     'typescript',
     'yaml',
   },
-  highlight = { enable = true },
+  highlight = {
+    enable = true,
+
+    -- Remove this to use TS highlighter for some of the highlights (Experimental)
+    disable = {'org'},
+    -- Required since TS highlighter doesn't support all syntax features (conceal)
+    additional_vim_regex_highlighting = {'org'},
+  },
   incremental_selection = { enable = true },
   textobjects = { enable = true },
   matchup = {
     enable = true,
   },
 }
+LUA
+
+" ================= Org mode ====================
+
+lua <<LUA
+require('orgmode').setup({
+  org_agenda_files = {'~/.config/orgmode/**/*'},
+  org_default_notes_file = '~/.config/orgmode/refile.org',
+})
 LUA
 
 " ================== status line ================

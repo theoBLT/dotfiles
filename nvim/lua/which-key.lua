@@ -12,6 +12,11 @@ vim.g.which_key_leader = {
   ['d']    = 'toggle-binding-pry',
   ['f']    = 'fzf-ripgrep',
   ['l']    = 'toggle-location-list',
+  ['o']    = {
+    ['name'] = "+org-mode",
+    ['a'] = "open-agenda-prompt",
+    ['c'] = "open-capture-prompt",
+  },
   ['q']    = 'toggle-quick-fix',
   ['t']    = 'test-current-file',
   ['T']    = 'test-current-line',
