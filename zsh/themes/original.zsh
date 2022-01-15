@@ -1,10 +1,3 @@
-function theme_colors() {
-  for code ({000..255}) print -P -- \
-    "$code: %F{$code}This is how your text would look like%f"
-}
-
-export GITSTATUS_DAEMON=$HOME/.nix-profile/bin/gitstatusd
-
 POWERLEVEL9K_VI_INSERT_MODE_STRING=""
 POWERLEVEL9K_VI_COMMAND_MODE_STRING="[N]"
 POWERLEVEL9K_MODE="nerdfont-complete"
