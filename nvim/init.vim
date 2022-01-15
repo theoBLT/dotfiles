@@ -261,13 +261,8 @@ Plug 'joker1007/vim-ruby-heredoc-syntax'  " fenced syntax colors in heredocs
 Plug 'ecomba/vim-ruby-refactoring'        " extract vars, methods, etc
 
 " Snippets
-Plug 'norcalli/snippets.nvim'
 Plug 'SirVer/UltiSnips'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-
 Plug 'honza/vim-snippets'
-Plug 'craigmac/vim-vsnip-snippets'
 
 " Syntax checking
 Plug 'dense-analysis/ale'
@@ -617,10 +612,7 @@ lua require("statusline")
 
 " ================== snippets ==================
 
-" inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-
 let g:UltiSnipsExpandTrigger = "<nop>"
-lua require("custom_snippets")
 
 " ================= which key ==================
 lua require("which-key")
