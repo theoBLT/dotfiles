@@ -1,10 +1,8 @@
 local lspconfig = require('lspconfig')
 local lsp_status = require('lsp-status')
-local compe = require('compe')
-local snippets_nvim = require('snippets')
 local lspkind = require('lspkind')
-
 local trouble = require('trouble')
+local cmp = require('cmp')
 
 trouble.setup({
   use_diagnostic_signs = true,
@@ -54,100 +52,92 @@ require("nvim-ale-diagnostic")
 -- Completion
 lspkind.init() -- setup icons
 
-compe.setup({
-  enabled = true,
-  autocomplete = true,
-  documentation = true,
-  min_length = 1,
-  source = {
-    path = true,
-    buffer = true,
-    calc = false,
-    vsnip = true,
-    nvim_lsp = true,
-    nvim_lua = true,
-    spell = true,
-    tags = true,
-    snippets_nvim = true,
-    treesitter = true,
-    ultisnips = true,
-  },
-})
-
-do
-  local t = function(str)
-    return vim.api.nvim_replace_termcodes(str, true, true, true)
-  end
-
-  local isAutocompleteSelected = function()
-    local result = vim.fn.complete_info({'selected'})
-    return result['selected'] >= 0
-  end
-
-  -- Use (s-)tab to:
-  --- move to prev/next item in completion menuone
-  --- jump to prev/next snippet's placeholder
-  _G.tab_complete = function()
-    local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
-
-    if vim.fn.pumvisible() == 1 then
-      return t "<C-n>"
-    elseif snippetNvim or snippets_nvim.has_active_snippet() then
-      return "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
-    elseif vim.api.nvim_eval([[ UltiSnips#CanJumpForwards() ]]) == 1 then
-      return t "<cmd>call UltiSnips#JumpForwards()<CR>"
-    elseif vim.fn.call("vsnip#jumpable", {1}) == 1 then
-      return t "<Plug>(vsnip-jump-next)"
-    else
-      return t "<Tab>"
-    end
-  end
-
-  _G.s_tab_complete = function()
-    if vim.fn.pumvisible() == 1 then
-      return t "<C-p>"
-    elseif vim.api.nvim_eval([[ UltiSnips#CanJumpBackwards() ]]) == 1 then
-      return t "<cmd>call UltiSnips#JumpBackwards()<CR>"
-    elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
-      return t "<Plug>(vsnip-jump-prev)"
-    else
-      return t "<S-Tab>"
-    end
-  end
-
-  _G.enter_with_snippets = function()
-    local _, snippetNvim = snippets_nvim.lookup_snippet_at_cursor()
-    local autocompleteOpen = vim.fn.pumvisible() == 1
-    local autocompleteSelected = isAutocompleteSelected()
-
-    if snippetNvim and not autocompleteSelected then
-      if autocompleteOpen then
-        vim.fn['compe#close']('<C-e>')
-      end
-
-      return t "<cmd>lua return require('snippets').expand_or_advance(1)<CR>"
-    elseif vim.api.nvim_eval([[ UltiSnips#CanExpandSnippet() ]]) == 1 then
-      if autocompleteOpen then
-        vim.fn['compe#close']('<C-e>')
-      end
-
-      return t "<cmd>call UltiSnips#ExpandSnippet()<CR>"
-    elseif vim.api.nvim_eval([[ vsnip#expandable() ]]) == 1 then
-      return t "<Plug>(vsnip-expand)"
-    else
-      return vim.fn['compe#confirm']("\n")
-    end
-  end
+-- setup nvim-cmp
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
-vim.api.nvim_set_keymap("i", "<CR>", "v:lua.enter_with_snippets()", {expr = true, silent = true, noremap = true})
-vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+local feedkey = function(key, mode)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+end
 
--- set logs, read with
--- :lua vim.cmd('e'..vim.lsp.get_log_path())
+cmp.setup({
+  formatting = {
+    format = lspkind.cmp_format(),
+  },
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+    end,
+  },
+  mapping = {
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    -- Specify `cmp.config.disable` if you want to remove the default `<C-y>`
+    -- mapping.
+    ['<C-y>'] = cmp.config.disable,
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif vim.fn["vsnip#available"](1) == 1 then
+        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+      end
+    end, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, { "i", "s" }),
+    -- Accept currently selected item. Set `select` to `false` to only confirm
+    -- explicitly selected items.
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' }, -- For vsnip users.
+    -- { name = 'luasnip' }, -- For luasnip users.
+    -- { name = 'ultisnips' }, -- For ultisnips users.
+    -- { name = 'snippy' }, -- For snippy users.
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work
+-- anymore).
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't
+-- work anymore).
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
+local lspCapabilities = require('cmp_nvim_lsp')
+  .update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+---------------------------------
+
 vim.lsp.set_log_level("debug")
 
 -- Setup LSP statusline
@@ -155,6 +145,7 @@ lsp_status.register_progress()
 
 -- Flow
 lspconfig.flow.setup({
+  capabilities = lspCapabilities,
   cmd = { 'node_modules/.bin/flow', 'lsp' },
 })
 
@@ -174,6 +165,7 @@ else
 end
 
 lspconfig.sumneko_lua.setup({
+  capabilities = lspCapabilities,
   cmd = sumneko_cmd,
   settings = {
     Lua = {
@@ -200,7 +192,8 @@ lspconfig.sumneko_lua.setup({
 
 -- Rust
 lspconfig.rust_analyzer.setup({
-  on_attach=on_attach,
+  capabilities = lspCapabilities,
+  on_attach = on_attach,
   settings = {
     ["rust-analyzer"] = {
       assist = {
@@ -220,6 +213,7 @@ lspconfig.rust_analyzer.setup({
 -- Sorbet lsp for Stripe, if it exists
 function setupVanillaLspClients()
   lspconfig.sorbet.setup({
+    capabilities = lspCapabilities,
     root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
   })
 end
@@ -231,7 +225,12 @@ end)
 local inStripe = stripeLsp and stripeLsp.setupClients
 
 if inStripe then
-  stripeLsp.setupClients(setupVanillaLspClients)
+  stripeLsp.setupClients(
+    {
+      capabilities = lspCapabilities,
+    },
+    setupVanillaLspClients
+  )
 else
   setupVanillaLspClients()
 end

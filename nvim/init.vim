@@ -236,10 +236,18 @@ Plug 'Shougo/unite.vim'
 Plug 'neovim/nvim-lspconfig'             " out of the box LSP configs for common langs
 Plug 'glepnir/lspsaga.nvim'              " code action plugin
 Plug 'nvim-lua/lsp-status.nvim'          " provides statusline information for LSP
-Plug 'hrsh7th/nvim-compe'                " completion engine
 Plug 'onsails/lspkind-nvim'              " add vscode-style icons to completion menu
 Plug 'nathunsmitty/nvim-ale-diagnostic'  " route lsp diagnostics to ALE
 Plug 'ray-x/lsp_signature.nvim'          " floating signature 'as you type'
+
+" Completion
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-vsnip'
+
 
 " Markdown
 Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}  " markdown preview with :Glow
