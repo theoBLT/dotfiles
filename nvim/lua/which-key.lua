@@ -58,7 +58,8 @@ vim.g.which_key_space = {
     ['r'] = 'show-references',
     ['t'] = 'jump-to-type-definition',
     ['w'] = 'list-workspace-document-symbols',
-  }
+  },
+  ['t'] = 'file-tree',
 }
 
 vim.api.nvim_set_keymap("n", "<space>", [[:<c-u>WhichKey '<space>'<CR>]], { silent = true })

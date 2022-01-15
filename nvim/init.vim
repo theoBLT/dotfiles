@@ -231,6 +231,7 @@ Plug 'LudoPinelli/comment-box.nvim'   " lets you surround comments in a box.
 Plug 'danro/rename.vim'
 Plug 'Shougo/vimfiler.vim'
 Plug 'Shougo/unite.vim'
+Plug 'kyazdani42/nvim-tree.lua'
 
 " LSP
 Plug 'neovim/nvim-lspconfig'             " out of the box LSP configs for common langs
@@ -664,6 +665,21 @@ require('lightspeed').setup({
 LUA
 
 nmap s <Plug>Lightspeed_s
+
+" ================= nvim-tree ===================
+
+" highlight NvimTreeFolderIcon guibg=blue
+nnoremap <Space>t :NvimTreeToggle<CR>
+
+lua <<LUA
+require('nvim-tree').setup({
+  disable_netrw = false,
+  hijack_netrw = false,
+  git = {
+    -- enable = false,
+  },
+})
+LUA
 
 " ================= Comment box =================
 
