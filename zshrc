@@ -74,7 +74,7 @@ do
   source $file
 done
 
-source $HOME/.zsh/themes/stripe.zsh
+source $HOME/.zsh/themes/original.zsh
 
 for file in $HOME/.zsh/secrets/**/*.zsh
 do
