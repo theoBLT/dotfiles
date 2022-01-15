@@ -197,7 +197,9 @@ let &t_SI = "\<esc>[5 q" " I beam cursor for insert mode
 let &t_EI = "\<esc>[2 q" " block cursor for normal mode
 let &t_SR = "\<esc>[3 q" " underline cursor for replace mode
 
-" ================ Plugins ==========================
+" ╭────────────────────────────────────────────────────────────────────╮
+" │                               Plugins                              │
+" ╰────────────────────────────────────────────────────────────────────╯
 
 call plug#begin('~/.local/nvim/plugins')
 
@@ -223,6 +225,7 @@ Plug 'tpope/vim-abolish'              " snake_case -> camelCase, etc
 Plug 'ggandor/lightspeed.nvim'        " successor to vim-sneak
 Plug 'tpope/vim-repeat'               " remaps .
 Plug 'andymass/vim-matchup'           " extended % key matching
+Plug 'LudoPinelli/comment-box.nvim'   " lets you surround comments in a box.
 
 " Files
 Plug 'danro/rename.vim'
@@ -315,7 +318,6 @@ Plug 'tpope/vim-scriptease'
 call SourceIfExists('~/.config/nvim/layers/private/packages.vim')
 
 call plug#end()
-
 
 " ================ Theme ========================
 
@@ -634,6 +636,14 @@ require('lightspeed').setup({
 LUA
 
 nmap s <Plug>Lightspeed_s
+
+" ================= Comment box =================
+
+nnoremap <Space>bb <Cmd>lua require('comment-box').lbox()<CR>
+vnoremap <Space>bb <Cmd>lua require('comment-box').lbox()<CR>
+
+nnoremap <Space>bc <Cmd>lua require('comment-box').cbox()<CR>
+vnoremap <Space>bc <Cmd>lua require('comment-box').cbox()<CR>
 
 " ================= Stripe ======================
 
