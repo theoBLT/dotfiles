@@ -3,6 +3,7 @@
 # Adds a bad scanning effect to PDF files.
 # Requires:
 #  graphicsmagick, img2pdf, optipng, and pdftk
+# stolen from: https://news.ycombinator.com/item?id=30028145
 
 if [ $# -ne 2 ]; then
   echo 1>&2 "Usage: $0 input.pdf output.pdf"
