@@ -498,6 +498,12 @@ nnoremap <leader>xx <cmd>TroubleToggle<cr>
 
 set completeopt=menu,menuone,noselect
 
+" 300ms before CursorHold events fire (like hover text on errors)
+set updatetime=300
+
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, {scope = "line", close_events = {"CursorMoved", "CursorMovedI", "BufHidden", "InsertCharPre", "WinLeave"}})
+autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
+
 call luaeval('require("lspservers")')
 
 " nnoremap <silent> gh :Lspsaga lsp_finder<CR>
