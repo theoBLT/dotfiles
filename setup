@@ -11,6 +11,7 @@ require_installer devtools
 require_installer zsh
 require_installer python
 require_installer ruby
+require_installer node
 require_installer tmux
 require_installer fonts
 require_installer neovim
