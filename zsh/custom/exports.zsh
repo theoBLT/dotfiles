@@ -56,3 +56,6 @@ fi
 
 # Don't be helpful
 export HOMEBREW_NO_AUTO_UPDATE=1
+
+# brew mac m1
+export PATH=/opt/homebrew/bin:$PATH

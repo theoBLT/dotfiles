@@ -78,9 +78,17 @@ function install_rbenv_default_gems() {
   symlink_dotfile $default_gem_file $(rbenv root)/default-gems
 }
 
+function install_rbenv() {
+  if ! command_exists "rbenv"; then
+    dotsay "@b@blue[[Installing rbenv...]]"
+    brew_install rbenv
+  fi
+}
+
 function bootstrap_rbenv() {
   if use_rbenv; then
     dotsay "@b@blue[[Installing rbenv extras...]]"
+    install_rbenv
     install_rbenv_default_gems
   else
     dotsay "@b@yellow[[Skipping rbenv, we aren't using it]]"
