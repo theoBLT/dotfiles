@@ -70,10 +70,10 @@
   co-origin = !git checkout -b $1 origin/$1
 
   # Quick sync (non-interactive mode)
-  qsync = !git fetch origin master && git rebase --no-keep-empty origin/master
+  qsync = !git fetch origin master:master && git rebase --no-keep-empty master
 
-  # interactive sync your current branch with master-passing-tests
-  sync = !git fetch origin master && git rebase --no-keep-empty -i origin/master
+  # interactive sync your current branch with master
+  sync = !git fetch origin master:master && git rebase --no-keep-empty -i master
   take-master = !git checkout --ours $1 && git add $1 && git status
 
   # respond to PR feedback
