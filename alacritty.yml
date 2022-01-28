@@ -2,6 +2,12 @@ env:
   TERM: alacritty
 
 window:
+  # Background opacity
+  #
+  # Window opacity as a floating point number from `0.0` to `1.0`.
+  # The value `0.0` is completely transparent and `1.0` is opaque.
+  opacity: 1.0
+
   # Allow terminal applications to change Alacritty's window title.
   dynamic_title: false
 
@@ -150,12 +156,6 @@ colors:
 # Specifying a `duration` of `0` will disable the visual bell.
 bell:
   duration: 0
-
-# Background opacity
-#
-# Window opacity as a floating point number from `0.0` to `1.0`.
-# The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 1.0
 
 cursor:
   # Cursor style
