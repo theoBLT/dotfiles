@@ -211,9 +211,16 @@ if vim.fn.executable("lua-language-server") == 1 then
   sumneko_cmd = {"lua-language-server"}
 else
   local sumneko_root_path = vim.fn.getenv("HOME") .. "/.local/nvim/lsp/lua-language-server"
+  local bin_path = ""
+
+  if vim.fn.executable(sumneko_root_path .. "/bin/macOS/lua-language-server") == 1 then
+    bin_path = sumneko_root_path .. "/bin/macOS/lua-language-server"
+  else
+    bin_path = sumneko_root_path .. "/bin/lua-language-server"
+  end
 
   sumneko_cmd = {
-    sumneko_root_path .. "/bin/macOS/lua-language-server",
+    bin_path,
     "-E",
     sumneko_root_path .. "/main.lua",
   }
