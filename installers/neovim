@@ -106,11 +106,10 @@ function install_lua_language_server() {
     git clone https://github.com/sumneko/lua-language-server "$location"
 
     cd "$location" || exit 1
-    git checkout tags/1.14.2 -b install-1.14.2
     git submodule update --init --recursive
 
     cd 3rd/luamake || exit 1
-    ninja -f ninja/macos.ninja
+    ./compile/install.sh
     cd ../.. || exit 1
     ./3rd/luamake/luamake rebuild
   fi
