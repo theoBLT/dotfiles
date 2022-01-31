@@ -25,11 +25,11 @@ local function getRichLinkToCurrentChromeTab()
 
   -- Remove trailing garbage from window title for a better looking link.
   local removePatterns = {
-    " %- Jira",
-    "- - Google Chrome.*",
     " – Dropbox Paper.*",
+    "- - Google Chrome.*",
     " %- Google Docs",
     " %- Google Sheets",
+    " %- Jira",
     " – Figma",
   }
 
@@ -62,13 +62,13 @@ local function getRichLinkToCurrentChromeTab()
   -- Add fun emoji to the link depending on the source.
   -- 99 times 100 I'm pasting this to Slack.
   local emojiPatterns = {
-    ["paper.dropbox.com"] = ":paper:",
-    ["git.corp.stripe.com"] = ":octocat:",
+    ["confluence.corp.stripe.com"] = ":confluence:",
     ["docs.google.com/document"] = ":google-docs:",
     ["docs.google.com/spreadsheets"] = ":google-sheets:",
-    ["jira.corp.stripe.com"] = ":jira:",
-    ["confluence.corp.stripe.com"] = ":confluence:",
     ["figma.com"] = ":figma-:",
+    ["git.corp.stripe.com"] = ":octocat:",
+    ["jira.corp.stripe.com"] = ":jira:",
+    ["paper.dropbox.com"] = ":paper:",
   }
 
   for pattern, emoji in pairs(emojiPatterns) do
