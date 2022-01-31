@@ -27,7 +27,6 @@ local function getRichLinkToCurrentChromeTab()
   title = string.gsub(title, "- - Google Chrome.*", "")
   title = string.gsub(title, " – Dropbox Paper.*", "")
   title = string.gsub(title, " %- Google Docs$", "")
-  -- title = string.gsub(title, " -$", "")
 
   -- Encode the title as html entities like (&#107;&#84;), so that we can
   -- print out unicode characters inside of `getStyledTextFromData` and have
