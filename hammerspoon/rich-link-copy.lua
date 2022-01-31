@@ -61,20 +61,21 @@ local function getRichLinkToCurrentChromeTab()
 
   -- Add fun emoji to the link depending on the source.
   -- 99 times 100 I'm pasting this to Slack.
-  if url:find("paper.dropbox.com") then
-    html = ":paper: " .. html
-  elseif url:find("git.corp.stripe.com") then
-    html = ":octocat: " .. html
-  elseif url:find("docs.google.com/document") then
-    html = ":google-docs: " .. html
-  elseif url:find("docs.google.com/spreadsheets") then
-    html = ":google-sheets: " .. html
-  elseif url:find("jira.corp.stripe.com") then
-    html = ":jira: " .. html
-  elseif url:find("confluence.corp.stripe.com") then
-    html = ":confluence: " .. html
-  elseif url:find("figma.com") then
-    html = ":figma-: " .. html
+  local emojiPatterns = {
+    ["paper.dropbox.com"] = ":paper:",
+    ["git.corp.stripe.com"] = ":octocat:",
+    ["docs.google.com/document"] = ":google-docs:",
+    ["docs.google.com/spreadsheets"] = ":google-sheets:",
+    ["jira.corp.stripe.com"] = ":jira:",
+    ["confluence.corp.stripe.com"] = ":confluence:",
+    ["figma.com"] = ":figma-:",
+  }
+
+  for pattern, emoji in pairs(emojiPatterns) do
+    if url:find(pattern) then
+      html = emoji .. " " .. html
+      break
+    end
   end
 
   -- Insert the styled link into the clipboard
