@@ -24,11 +24,18 @@ local function getRichLinkToCurrentChromeTab()
   local _, title = hs.osascript.applescript(script)
 
   -- Remove trailing garbage from window title for a better looking link.
-  title = string.gsub(title, "- - Google Chrome.*", "")
-  title = string.gsub(title, " – Dropbox Paper.*", "")
-  title = string.gsub(title, " %- Google Docs", "")
-  title = string.gsub(title, " %- Google Sheets", "")
-  title = string.gsub(title, " – Figma", "")
+  local removePatterns = {
+    " %- Jira",
+    "- - Google Chrome.*",
+    " – Dropbox Paper.*",
+    " %- Google Docs",
+    " %- Google Sheets",
+    " – Figma",
+  }
+
+  for _, pattern in ipairs(removePatterns) do
+    title = string.gsub(title, pattern, "")
+  end
 
   -- Encode the title as html entities like (&#107;&#84;), so that we can
   -- print out unicode characters inside of `getStyledTextFromData` and have
