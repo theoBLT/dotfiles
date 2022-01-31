@@ -26,7 +26,8 @@ local function getRichLinkToCurrentChromeTab()
   -- Remove trailing garbage from window title for a better looking link.
   title = string.gsub(title, "- - Google Chrome.*", "")
   title = string.gsub(title, " – Dropbox Paper.*", "")
-  title = string.gsub(title, " %- Google Docs$", "")
+  title = string.gsub(title, " %- Google Docs", "")
+  title = string.gsub(title, " %- Google Sheets", "")
 
   -- Encode the title as html entities like (&#107;&#84;), so that we can
   -- print out unicode characters inside of `getStyledTextFromData` and have
@@ -56,10 +57,14 @@ local function getRichLinkToCurrentChromeTab()
     html = ":paper: " .. html
   elseif url:find("git.corp.stripe.com") then
     html = ":octocat: " .. html
-  elseif url:find("docs.google.com") then
+  elseif url:find("docs.google.com/document") then
     html = ":google-docs: " .. html
+  elseif url:find("docs.google.com/spreadsheets") then
+    html = ":google-sheets: " .. html
   elseif url:find("jira.corp.stripe.com") then
     html = ":jira: " .. html
+  elseif url:find("confluence.corp.stripe.com") then
+    html = ":confluence: " .. html
   end
 
   -- Insert the styled link into the clipboard
