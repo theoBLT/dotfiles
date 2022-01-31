@@ -58,6 +58,8 @@ local function getRichLinkToCurrentChromeTab()
     html = ":octocat: " .. html
   elseif url:find("docs.google.com") then
     html = ":google-docs: " .. html
+  elseif url:find("jira.corp.stripe.com") then
+    html = ":jira: " .. html
   end
 
   -- Insert the styled link into the clipboard
