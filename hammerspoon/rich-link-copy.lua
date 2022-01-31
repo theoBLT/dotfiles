@@ -25,7 +25,9 @@ local function getRichLinkToCurrentChromeTab()
 
   -- Remove trailing garbage from window title for a better looking link.
   title = string.gsub(title, "- - Google Chrome.*", "")
-  title = string.gsub(title, " – Dropbox Paper", "")
+  title = string.gsub(title, " – Dropbox Paper.*", "")
+  title = string.gsub(title, " %- Google Docs$", "")
+  -- title = string.gsub(title, " -$", "")
 
   -- Encode the title as html entities like (&#107;&#84;), so that we can
   -- print out unicode characters inside of `getStyledTextFromData` and have
@@ -56,14 +58,14 @@ local function getRichLinkToCurrentChromeTab()
   elseif url:find("git.corp.stripe.com") then
     html = ":octocat: " .. html
   elseif url:find("docs.google.com") then
-    html = ":google-docs: "
+    html = ":google-docs: " .. html
   end
 
   -- Insert the styled link into the clipboard
   local styledText = hs.styledtext.getStyledTextFromData(html, "html")
   hs.pasteboard.writeObjects(styledText)
 
-  hs.alert("Copied link to " .. title)
+  hs.alert("Copied link to \"" .. title .. "\"")
 end
 
 hyperKey:bind('g'):toFunction("Copy a link to current tab", getRichLinkToCurrentChromeTab)
