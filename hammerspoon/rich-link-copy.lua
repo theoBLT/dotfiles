@@ -9,11 +9,12 @@ local utf8 = require('utf8')
 local function getRichLinkToCurrentChromeTab()
   local application = hs.application.frontmostApplication()
 
-  -- only check chrome
+  -- Only copy from Chrome
   if application:bundleID() ~= "com.google.Chrome" then
     return
   end
 
+  -- Grab the <title> from the page.
   local script = [[
     tell application "Google Chrome"
       get title of active tab of first window
@@ -22,17 +23,20 @@ local function getRichLinkToCurrentChromeTab()
 
   local _, title = hs.osascript.applescript(script)
 
-  -- remove trailing garbage from window title
+  -- Remove trailing garbage from window title for a better looking link.
   title = string.gsub(title, "- - Google Chrome.*", "")
+  title = string.gsub(title, " – Dropbox Paper", "")
 
+  -- Encode the title as html entities like (&#107;&#84;), so that we can
+  -- print out unicode characters inside of `getStyledTextFromData` and have
+  -- them render correctly in the link.
   local encodedTitle = ""
 
-  -- encode the title as html entities like (&#107;&#84;), so that we can
-  -- print out unicode characters inside of `getStyledTextFromData`.
   for _, code in utf8.codes(title) do
     encodedTitle = encodedTitle .. "&#" .. code .. ";"
   end
 
+  -- Get the current URL from the address bar.
   script = [[
     tell application "Google Chrome"
       get URL of active tab of first window
@@ -40,9 +44,23 @@ local function getRichLinkToCurrentChromeTab()
   ]]
 
   local _, url = hs.osascript.applescript(script)
-  local html = "<a href=\"" .. url .. "\">" .. encodedTitle .. "</a>"
-  local styledText = hs.styledtext.getStyledTextFromData(html, "html")
 
+  -- Embed the URL + title in an <a> tag so macOS converts it to a rich link
+  -- on paste.
+  local html = "<a href=\"" .. url .. "\">" .. encodedTitle .. "</a>"
+
+  -- Add fun emoji to the link depending on the source.
+  -- 99 times 100 I'm pasting this to Slack.
+  if url:find("paper.dropbox.com") then
+    html = ":paper: " .. html
+  elseif url:find("git.corp.stripe.com") then
+    html = ":octocat: " .. html
+  elseif url:find("docs.google.com") then
+    html = ":google-docs: "
+  end
+
+  -- Insert the styled link into the clipboard
+  local styledText = hs.styledtext.getStyledTextFromData(html, "html")
   hs.pasteboard.writeObjects(styledText)
 
   hs.alert("Copied link to " .. title)
