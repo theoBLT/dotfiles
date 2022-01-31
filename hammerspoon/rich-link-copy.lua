@@ -69,6 +69,7 @@ local function getRichLinkToCurrentChromeTab()
     ["git.corp.stripe.com"] = ":octocat:",
     ["jira.corp.stripe.com"] = ":jira:",
     ["paper.dropbox.com"] = ":paper:",
+    ["whimsical.com"] = ":whimsical:",
   }
 
   for pattern, emoji in pairs(emojiPatterns) do
