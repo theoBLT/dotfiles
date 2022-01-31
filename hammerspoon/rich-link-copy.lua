@@ -28,6 +28,7 @@ local function getRichLinkToCurrentChromeTab()
   title = string.gsub(title, " – Dropbox Paper.*", "")
   title = string.gsub(title, " %- Google Docs", "")
   title = string.gsub(title, " %- Google Sheets", "")
+  title = string.gsub(title, " – Figma", "")
 
   -- Encode the title as html entities like (&#107;&#84;), so that we can
   -- print out unicode characters inside of `getStyledTextFromData` and have
@@ -65,6 +66,8 @@ local function getRichLinkToCurrentChromeTab()
     html = ":jira: " .. html
   elseif url:find("confluence.corp.stripe.com") then
     html = ":confluence: " .. html
+  elseif url:find("figma.com") then
+    html = ":figma-: " .. html
   end
 
   -- Insert the styled link into the clipboard
