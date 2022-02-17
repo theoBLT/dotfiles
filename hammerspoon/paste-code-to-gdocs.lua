@@ -1,3 +1,15 @@
+-- wtf this file
+-- if you copy a block of code to your clipboard
+-- you can paste it into Google Docs with the hotkey all the way below
+-- it will prompt you what language to format as (select Plain Text for no format)
+--
+-- and this will format it as a 2x1 table with line numbers on the left column
+-- and the code, syntax highlighted, on the right column
+-- then paste it into gdocs
+-- then restore your clipboard
+--
+-- phew
+
 local header = [[
 {\rtf1\ansi\ansicpg1252\cocoartf2636
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 RobotoMono-Regular;}
