@@ -89,6 +89,7 @@ local function pasteToGdocs(language)
 
   -- Get code highlighted as RTF
   local codeRtf = hs.execute("cat /tmp/code.txt | /usr/local/bin/highlight --no-trailing-nl -O rtf --font 'Roboto Mono' --font-size 16 --syntax " .. language .. " -s 'solarized-light'")
+  hs.execute("rm /tmp/code.txt")
 
   local rtf = header ..
     generateLineNumbers(code) ..
